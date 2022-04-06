@@ -18,7 +18,7 @@
           background: #fff;
           display: flex;
           justify-content: space-between;
-          padding: 0 0 0 1rem;
+          padding: 0 1rem;
         "
       >
           <a-icon
@@ -94,6 +94,7 @@ export default {
 #components-layout-demo-custom-trigger {
   height: 100vh;
   overflow: auto;
+  min-width: 960px;
 }
 
 #components-layout-demo-custom-trigger .trigger {

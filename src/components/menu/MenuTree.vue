@@ -15,7 +15,7 @@
 <script>
 import ChildMenu from "components/menu/ChildMenu";
 
-const reg = new RegExp(/^http(s)?:\/\/\w+/);
+const linkReg = new RegExp(/^http(s)?:\/\/\w+/);
 
 export default {
   name: "MenuTree",
@@ -33,7 +33,7 @@ export default {
   },
   methods: {
     to({ key, _, keyPath }) {
-      if (reg.test(key)) {
+      if (linkReg.test(key)) {
         window.open(key);
       } else {
         key = keyPath.length > 1 ? keyPath.join("") : key;

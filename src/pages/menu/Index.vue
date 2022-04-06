@@ -1,25 +1,17 @@
 <template>
   <div class="container" :style="`height: calc(100vh - ${contentHeight}px)`">
-    <table-wrapper
-      @change="tableChange"
-      :data-source="menuTree"
-      :columns="columns"
-      :pagination="pagination"
-      :row-class-name="tableRowClass"
-      :loading="tableLoading"
-      key="id"
-    >
+    <table-wrapper @change="tableChange" :data-source="menuTree" :columns="columns" :pagination="pagination"
+                   :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
           <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加
           </a-button>
         </div>
       </template>
-      <template slot="action" slot-scope="data">
-        <a @click.stop="editRecord(data)">
+      <template slot="operate" slot-scope="data">
+        <a @click="editRecord(data)">
           <a-icon type="edit" />
-          编辑</a
-        >
+          编辑</a>
         <simple-bar />
         <a-popconfirm title="确定移动至最前吗？" @confirm="moveToStart(data)">
           <a>
@@ -52,12 +44,9 @@
           </a>
           <a-menu slot="overlay">
             <a-menu-item>
-              <a-popconfirm title="确定删除吗？" @confirm="deleteRecord(data)">
-                <a class="red-text">
-                  <a-icon type="delete" />
-                  删除</a
-                >
-              </a-popconfirm>
+              <a class="red-text" @click="deleteRecord(data)">
+                <a-icon type="delete" />
+                删除</a>
             </a-menu-item>
           </a-menu>
         </a-dropdown>
@@ -68,7 +57,7 @@
       </template>
     </table-wrapper>
     <a-modal okText="保存 " :title="modalTitle" :visible="modalVisible" @ok="submitModal" @cancel="modalCancel"
-             :maskClosable="false" width="70%">
+             :maskClosable="false" width="70%" :confirmLoading="confirmLoading">
       <form>
         <a-form-model
           :model="modalForm"
@@ -77,21 +66,17 @@
           v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }"
         >
           <a-form-model-item label="菜单名" prop="name">
-            <a-input placeholder="请输入账号" v-model="modalForm.username" />
+            <a-input placeholder="请输入菜单名" v-model="modalForm.name" />
           </a-form-model-item>
           <a-form-model-item label="路由或外链" prop="path">
             <a-input
-              placeholder="请输入密码"
-              type="password"
-              v-model="modalForm.password"
+              placeholder="请输入路由或外联"
+              v-model="modalForm.path"
             />
           </a-form-model-item>
-          <a-form-model-item label="父级菜单" prop="confirmPassword">
-            <a-input
-              placeholder="请确认密码"
-              type="password"
-              v-model="modalForm.confirmPassword"
-            />
+          <a-form-model-item label="父级菜单" prop="parentId">
+            <a-tree-select allowClear v-model="modalForm.parentId" placeholder="可选择父级菜单"
+                           :replaceFields="{title:'name',key:'id',value:'id'}" :tree-data="menuTree"></a-tree-select>
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -103,11 +88,12 @@
 import { mapState } from 'vuex';
 import { columns, rules } from './config';
 import MenuService from 'services/menu';
+import _ from 'lodash';
 
 const getOriginForm = () => ({
   name: undefined,
   path: undefined,
-  pId: undefined
+  parentId: undefined
 });
 export default {
   name: 'Menu',
@@ -116,54 +102,106 @@ export default {
       modalForm: getOriginForm(),
       rules,
       columns,
-      menuTree: [{}],
-      pagination: {},
+      menuTree: [],
+      pagination: false,
       tableLoading: false,
       modalTitle: '弹窗',
-      modalVisible: false
+      modalVisible: false,
+      confirmLoading: false
     };
   },
   computed: {
     ...mapState('setting', ['contentHeight'])
   },
-  created(){
-    this.getMenuTree()
+  created() {
+    this.getMenuTree();
   },
   methods: {
-    getMenuTree(){
-      MenuService.getMenuTree().then(res=>{
+    handlerTreeChild(tree) {
+      return tree.map(item => {
+        item?.children?.length ?
+          this.handlerTreeChild(item.children) :
+          Reflect.deleteProperty(item, 'children');
+        return item;
+      });
+    },
+    getMenuTree() {
+      this.tableLoading = true;
+      MenuService.getMenuTree().then(res => {
         console.log(res);
-        this.menuTree = res.data
-      })
+        this.menuTree = this.handlerTreeChild(res.data);
+      }).finally(() => {
+        this.tableLoading = false;
+      });
     },
     tableRowClass() {
     },
     tableChange() {
     },
     submitModal() {
+      this.$refs.ruleForm.validate(async (valid) => {
+        if (!valid) return;
+        this.confirmLoading = true;
+        try {
+          let res;
+          if (!this.modalForm.id) {
+            res = await MenuService.createMenu(this.modalForm);
+          } else {
+            res = await MenuService.updateMenu(this.modalForm);
+          }
+          this.$message.success(res.msg);
+        } finally {
+          this.confirmLoading = false;
+          this.getMenuTree();
+          this.modalCancel();
+        }
+      });
     },
     modalCancel() {
+      // this.$refs.ruleForm.clearValidate();
+      this.$refs.ruleForm.resetFields();
+      // this.modalForm = getOriginForm();
+      this.modalVisible = false;
     },
     moveToEnd() {
     },
     moveToStart() {
     },
-    editRecord() {
+    editRecord(data) {
+      this.modalForm = _.cloneDeep(data);
+      this.modalVisible = true;
     },
-    deleteRecord() {
+    async deleteRecord({ id }) {
+      this.$modal.confirm({
+        title: '确定要删除所选菜单吗',
+        content: '该操作不可逆',
+        onOk: async (cancle) => {
+          try {
+            const res = await MenuService.deleteMenu(id);
+            this.$message.success(res.msg);
+          } finally {
+            cancle()
+            this.getMenuTree();
+          }
+        },
+        onCancel() {
+          console.log('Cancel');
+        }
+      });
     },
     moveUp() {
     },
     moveDown() {
     },
     addRecord() {
+      this.modalVisible = true;
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.container{
+.container {
   padding: 12px;
 }
 

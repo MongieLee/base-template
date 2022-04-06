@@ -11,7 +11,7 @@ instance.defaults.timeout = 6000;
 const METHOD = {
   GET: 'GET',
   POST: 'POST',
-  PATCH: 'PATCH',
+  PUT: 'PUT',
   DELETE: 'DELETE'
 };
 
@@ -38,7 +38,7 @@ const request = (url, config = {}) => {
       },
       (err) => {
         message.error(err.message || '网络异常！请联系管理员');
-        resolve(err);
+        reject(err);
       }
     );
   });
@@ -61,11 +61,24 @@ const getRequest = (url, params = {}) => {
   return request(url, axiosConfig);
 };
 
-const patchRequest = () => {
-};
-const deleteRquest = () => {
+const putRequest = (url, data) => {
+  const axiosConfig = {
+    method: METHOD.PUT,
+    data
+  };
+  return request(url, axiosConfig);
 };
 
-export { postRequest, getRequest, patchRequest, deleteRquest };
+const deleteRequest = (url, id) => {
+  const axiosConfig = {
+    method: METHOD.DELETE,
+    params: {
+      id
+    }
+  };
+  return request(url, axiosConfig);
+};
+
+export { postRequest, getRequest, putRequest, deleteRequest };
 
 export default request;

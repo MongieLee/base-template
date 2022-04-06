@@ -1,5 +1,11 @@
 import * as echarts from "echarts";
 
+/**
+ * 生成echarts对象实例
+ * @param dom dom实例
+ * @param options echarts配置对象
+ * @returns {EChartsType}
+ */
 function initialEchartInstance(dom, options = {}) {
   if (!(dom instanceof HTMLElement)) {
     throw new Error("请传入Dom对象");

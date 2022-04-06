@@ -31,7 +31,7 @@
       :columns="columns"
       size="small"
       :rowKey="rowKey"
-      :pagination="{ ...defaultPagination, ...pagination }"
+      :pagination="pagination ? { ...defaultPagination, ...pagination } :pagination"
       :scroll="{ y: tableHeight, ...scroll }"
       :loading="loading"
       @change="paginationChange"
@@ -39,7 +39,7 @@
       :customRow="customRow"
     >
       <template v-for="(_, slot) of $scopedSlots" #[slot]="scope">
-        <slot v-if="slot === 'action'" :name="slot" v-bind="scope" />
+        <slot v-if="slot === 'operate'" :name="slot" v-bind="scope" />
         <slot v-else :name="slot" :data="scope" />
       </template>
     </a-table>
@@ -53,12 +53,12 @@ export default {
       cloneColumns: this.columns,
       defaultPagination: {
         showSizeChanger: true,
-        size: "small",
+        size: 'small',
         showTotal: (total, range) => {
           return `当前${range[0]}-${range[1]}条，共 ${total} 条`;
-        },
+        }
       },
-      tableHeight: 0,
+      tableHeight: 0
     };
   },
 
@@ -66,12 +66,12 @@ export default {
     setTimeout(() => {
       this.getListHeight(this.getParentEleHeight());
     });
-    window.addEventListener("resize", this.watchWindowResize);
+    window.addEventListener('resize', this.watchWindowResize);
   },
 
   methods: {
     paginationChange(pagination, filters, sorter, { currentDataSource }) {
-      this.$emit("change", pagination, filters, sorter, { currentDataSource });
+      this.$emit('change', pagination, filters, sorter, { currentDataSource });
     },
 
     // resize回调函数
@@ -83,7 +83,7 @@ export default {
     getParentEleHeight() {
       const layoutStyle = Object.keys(this.layoutStyle);
       let parentEleHeight;
-      if (layoutStyle.some((key) => key === "height")) {
+      if (layoutStyle.some((key) => key === 'height')) {
         parentEleHeight = this.getContentHeight(this.$refs.layoutRef);
       } else {
         parentEleHeight = this.getContentHeight(
@@ -95,19 +95,19 @@ export default {
 
     // 获取表格高度
     getListHeight(parentEleHeight) {
-      const dom = this.$refs.layoutRef.querySelector(".ant-table");
+      const dom = this.$refs.layoutRef.querySelector('.ant-table');
       let dValue = 0;
       const headerStyles = window.getComputedStyle(this.$refs.header);
-      dValue += headerStyles.marginTop.replace("px", "") - 0;
-      dValue += headerStyles.marginBottom.replace("px", "") - 0;
-      dValue += headerStyles.height.replace("px", "") - 0;
+      dValue += headerStyles.marginTop.replace('px', '') - 0;
+      dValue += headerStyles.marginBottom.replace('px', '') - 0;
+      dValue += headerStyles.height.replace('px', '') - 0;
 
-      dom.style.minHeight = parentEleHeight - dValue - 56.5 + "px"; // 强行拉高表格
+      dom.style.minHeight = parentEleHeight - dValue - 56.5 + 'px'; // 强行拉高表格
       dom.style.borderRight = `1px solid #e8e8e8`; // 处理表格👉边框缺失
       setTimeout(() => {
         dom
-          .querySelector(".ant-table-body")
-          .classList.add("tbody-bottom-border");
+          .querySelector('.ant-table-body')
+          .classList.add('tbody-bottom-border');
       });
 
       this.tableHeight = parentEleHeight - dValue - 39 - 56.5; // 39是表头，56.5是分页高度
@@ -117,10 +117,10 @@ export default {
     // 获取元素的内容区域高度
     getContentHeight(ele) {
       const node = window.getComputedStyle(ele);
-      const elePaddingLeft = node.paddingTop.replace("px", "") - 0;
-      const elePaddingRight = node.paddingBottom.replace("px", "") - 0;
+      const elePaddingLeft = node.paddingTop.replace('px', '') - 0;
+      const elePaddingRight = node.paddingBottom.replace('px', '') - 0;
       return ele.clientHeight - elePaddingLeft - elePaddingRight;
-    },
+    }
   },
 
   props: {
@@ -129,93 +129,93 @@ export default {
       type: Object,
       default: () => {
         return {};
-      },
+      }
     },
 
     // 加载状态
     loading: {
       type: Boolean,
-      default: false,
+      default: false
     },
 
     // 数据源
     dataSource: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
 
     // 列配置
     columns: {
       type: Array,
-      default: () => [],
+      default: () => []
     },
 
     // 容器内联样式
     layoutStyle: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
 
     // 头部容器内联样式
     headerStyle: {
       type: Object,
-      default: () => ({}),
+      default: () => ({})
     },
 
     // 唯一key
     rowKey: {
       type: String,
-      default: () => "id",
+      default: () => 'id'
     },
 
     // 分页配置
     pagination: {
-      type: Object,
+      type: [Object, Boolean],
       default: () => ({
         showSizeChanger: true,
-        size: "small",
+        size: 'small',
         showTotal: (total, range) =>
-          `当前${range[0]}-${range[1]}条，共 ${total} 条`,
-      }),
+          `当前${range[0]}-${range[1]}条，共 ${total} 条`
+      })
     },
 
     // 表格行样式名
     rowClassName: {
-      type: Function,
+      type: Function
     },
 
     // 表格行设置
     customRow: {
-      type: Function,
+      type: Function
     },
 
     // 工具栏是否隐藏显示
     toolbarVisible: {
       type: Boolean,
-      default: () => false,
+      default: () => false
     },
 
     // 导出按钮回调
     exportCallback: {
-      type: Function,
+      type: Function
     },
     // 选择功能配置
     rowSelection: {
-      type: Object,
+      type: Object
     },
     // 指定树形结构的列名
     childrenColumnName: {
-      type: String,
-    },
+      type: String
+    }
   },
 
   destroyed() {
-    window.removeEventListener("resize", this.watchWindowResize);
-  },
+    window.removeEventListener('resize', this.watchWindowResize);
+  }
 };
 </script>
 
-<style lang='less' scoped>
+<style lang="less" scoped>
 .a-container {
   overflow: hidden;
   background: #fff;

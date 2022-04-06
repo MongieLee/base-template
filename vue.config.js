@@ -14,14 +14,14 @@ module.exports = {
     port: 3456,
     proxy: {
       '/api': {
-        target: 'http://192.168.8.48:8080',
+        target: 'http://192.168.8.38:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/': '/'
         }
       },
       '/uploadFiles': {
-        target: 'http://192.168.8.48:8080',
+        target: 'http://192.168.8.38:8080',
         changeOrigin: true,
         pathRewrite: {
           '^/': '/'

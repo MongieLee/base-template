@@ -19,9 +19,12 @@ import {
   Result,
   Tabs,
   Tooltip,
+  TreeSelect,
+  Popconfirm,
 } from "ant-design-vue";
 
 Vue.use(Modal); // use [Vue.component] won't register directive and throw directive Error
+Vue.prototype.$modal = Modal;
 
 const { Sider, Header, Content, Footer } = Layout;
 const { Item: BreadcrumbItem } = Breadcrumb;
@@ -58,6 +61,8 @@ const components = [
   Tabs,
   TabPane,
   Tooltip,
+  TreeSelect,
+  Popconfirm
 ];
 
 export const batchImport = (components) => {

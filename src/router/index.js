@@ -8,6 +8,7 @@ Vue.use(VueRouter);
 const routes = [
   {
     path: '/',
+    redirect: '/about',
     component: () => import('components/layouts/MainLayout.vue'),
     children: [
       {
@@ -17,7 +18,7 @@ const routes = [
       },
       {
         path: 'system',
-        redirect:"/system/menu",
+        redirect: '/system/menu',
         component: () => import('components/EmptyView'),
         children: [
           {
