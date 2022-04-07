@@ -8,9 +8,7 @@
           <div class="system-name">珠海妇幼</div>
         </router-link>
       </div>
-      <MenuTree :menu-tree="[{key:'jjk',name:'test',children:[{key:'https://www.baidu.com',name:'fuck'}]},{
-      name:'About',key:'/about'
-    }]" />
+      <MenuTree :menu-tree="menuData" />
     </a-layout-sider>
     <a-layout>
       <a-layout-header
@@ -21,24 +19,23 @@
           padding: 0 1rem;
         "
       >
-          <a-icon
-            class="trigger"
-            :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-            @click="() => (collapsed = !collapsed)"
-          />
-<!--          <a-breadcrumb style="border:1px solid red;display: flex;align-items: center">-->
-<!--            <a-breadcrumb-item href="">-->
-<!--              <a-icon type="home" />-->
-<!--            </a-breadcrumb-item>-->
-<!--            <a-breadcrumb-item href="">-->
-<!--              <a-icon type="user" />-->
-<!--              <span>Application List</span>-->
-<!--            </a-breadcrumb-item>-->
-<!--            <a-breadcrumb-item>-->
-<!--              Application-->
-<!--            </a-breadcrumb-item>-->
-<!--          </a-breadcrumb>-->
-
+        <a-icon
+          class="trigger"
+          :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+          @click="() => (collapsed = !collapsed)"
+        />
+        <a-breadcrumb style="border:1px solid red;display: flex;align-items: center">
+          <a-breadcrumb-item href="">
+            <a-icon type="home" />
+          </a-breadcrumb-item>
+          <a-breadcrumb-item href="">
+            <a-icon type="user" />
+            <span>Application List</span>
+          </a-breadcrumb-item>
+          <a-breadcrumb-item>
+            Application
+          </a-breadcrumb-item>
+        </a-breadcrumb>
         <div>
           <Header />
         </div>
@@ -58,34 +55,41 @@
 </template>
 
 <script>
-import Header from "components/layouts/header/Header.vue";
-import Footer from "components/layouts/footer/Footer";
-import MenuTree from "components/menu/MenuTree";
+import Header from 'components/layouts/header/Header.vue';
+import Footer from 'components/layouts/footer/Footer';
+import MenuTree from 'components/menu/MenuTree';
 
-import TabsView from "components/layouts/tab/TabsView";
-import { mapMutations } from "vuex";
-import { routes } from "@/router";
+import TabsView from 'components/layouts/tab/TabsView';
+import { mapMutations } from 'vuex';
+import { routes } from '@/router';
+import MenuService from 'services/menu';
 
 export default {
-  name: "HomePage",
+  name: 'HomePage',
   components: { Header, TabsView, Footer, MenuTree },
   data() {
     return {
       collapsed: false,
       routes: routes[0].children,
-      breadcrumbPath:""
+      breadcrumbPath: '',
+      menuData: []
     };
+  },
+  created() {
+    this.correctContentHeight({ height: 160 });
+    this.getMenuTree()
   },
   computed: {
     menuWrapperWidth() {
       return `${this.collapsed ? 80 : 256}px`;
     }
   },
-  created() {
-    this.correctContentHeight({ height: 160 });
-  },
   methods: {
-    ...mapMutations("setting", ["correctContentHeight"])
+    ...mapMutations('setting', ['correctContentHeight']),
+    async getMenuTree() {
+      const { data } = await MenuService.getMenuTree();
+      this.menuData = data;
+    }
   }
 };
 

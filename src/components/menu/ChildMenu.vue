@@ -1,27 +1,27 @@
 <template functional>
-  <a-sub-menu :key="props.menu.key">
+  <a-sub-menu :key="props.menu.path">
     <span slot="title">
-      <a-icon v-if="props.menu.icon" :type="props.menu.icon" />
+      <a-icon :type="props.menu.icon || 'bug'" />
       <span>{{ props.menu.name }}</span>
     </span>
     <template v-for="menu in props.menu.children">
-      <a-menu-item :key="menu.key" v-if="!menu.children">
-        <a-icon v-if="menu.icon" :type="menu.icon" />
+      <a-menu-item :key="menu.path" v-if="!menu.children.length">
+        <a-icon  :type="menu.icon || 'bug'" />
         <span>{{ menu.name }}</span>
       </a-menu-item>
-      <ChildMenu v-else :key="menu.key" :props="menu" />
+      <ChildMenu v-else :key="menu.path" :props="menu" />
     </template>
   </a-sub-menu>
 </template>
 
 <script>
 export default {
-  name: "ChildMenu",
+  name: 'ChildMenu',
   props: {
     menu: {
       type: Object,
       required: true
     }
-  }
+  },
 };
 </script>

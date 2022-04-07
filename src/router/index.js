@@ -9,22 +9,27 @@ const routes = [
   {
     path: '/',
     redirect: '/about',
-    component: () => import('components/layouts/MainLayout.vue'),
+    component: () => import(/* webpackChunkName:"mainLayout" */ 'components/layouts/MainLayout.vue'),
     children: [
       {
-        path: 'about',
+        path: 'dashboard',
         name: 'About',
-        component: () => import('pages/About.vue')
+        component: () => import(/* webpackChunkName:"about"*/ 'pages/About.vue')
       },
       {
         path: 'system',
         redirect: '/system/menu',
-        component: () => import('components/EmptyView'),
+        component: () => import(/* webpackChunkName:"emptyView" */ 'components/EmptyView'),
         children: [
           {
             path: 'menu',
             name: 'Menu',
-            component: () => import('pages/menu/Index.vue')
+            component: () => import(/* webpackChunkName:"menu" */ 'pages/menu/Index.vue')
+          },
+          {
+            path: 'resource',
+            name: 'resource',
+            component: () => import(/* webpackChunkName:"resource" */ 'pages/system/resource/Index.vue')
           }
         ]
       }
@@ -34,6 +39,10 @@ const routes = [
     path: '/login',
     name: 'Login',
     component: () => import('pages/login/index')
+  },
+  {
+    path: '*',
+    component: () => import(/* webpackChunkName:"NotFound" */ 'pages/exception/404')
   }
 ];
 

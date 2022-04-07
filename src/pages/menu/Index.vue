@@ -4,7 +4,7 @@
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
-          <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加
+          <a-button :loading="tableLoading" type="primary" @click="addRecord" style="margin-right: 1em">添加
           </a-button>
         </div>
       </template>
@@ -37,23 +37,9 @@
           </a>
         </a-popconfirm>
         <simple-bar />
-        <a-dropdown :trigger="[`click`]">
-          <a class="ant-dropdown-link" @click="(e) => e.preventDefault()">
-            更多
-            <a-icon type="down" />
-          </a>
-          <a-menu slot="overlay">
-            <a-menu-item>
-              <a class="red-text" @click="deleteRecord(data)">
-                <a-icon type="delete" />
-                删除</a>
-            </a-menu-item>
-          </a-menu>
-        </a-dropdown>
-        <template v-if="data.isRelease">
-          <simple-bar />
-          <a-icon style="color: #da7979" type="check" />
-        </template>
+        <a class="red-text" @click="deleteRecord(data)">
+          <a-icon type="delete" />
+          删除</a>
       </template>
     </table-wrapper>
     <a-modal okText="保存 " :title="modalTitle" :visible="modalVisible" @ok="submitModal" @cancel="modalCancel"
@@ -163,35 +149,66 @@ export default {
       // this.modalForm = getOriginForm();
       this.modalVisible = false;
     },
-    moveToEnd() {
-    },
-    moveToStart() {
-    },
+
     editRecord(data) {
       this.modalForm = _.cloneDeep(data);
       this.modalVisible = true;
     },
-    async deleteRecord({ id }) {
+    async deleteRecord({ id, name }) {
       this.$modal.confirm({
-        title: '确定要删除所选菜单吗',
+        title: `确定要删除菜单【${name}】吗`,
         content: '该操作不可逆',
-        onOk: async (cancle) => {
-          try {
-            const res = await MenuService.deleteMenu(id);
+        onOk: () => {
+          this.tableLoading = true;
+          MenuService.deleteMenu(id).then(res => {
             this.$message.success(res.msg);
-          } finally {
-            cancle()
             this.getMenuTree();
-          }
+          });
         },
-        onCancel() {
-          console.log('Cancel');
+        onCancel: () => {
+          this.$message.info('已取消删除操作');
         }
       });
     },
-    moveUp() {
+    async moveUp({ id }) {
+      try {
+        this.tableLoading = true;
+        const { msg } = await MenuService.moveUp(id);
+        await this.getMenuTree();
+        this.$message.success(msg);
+      } catch {
+        this.tableLoading = false;
+      }
     },
-    moveDown() {
+    async moveDown({ id }) {
+      try {
+        this.tableLoading = true;
+        const { msg } = await MenuService.moveDown(id);
+        await this.getMenuTree();
+        this.$message.success(msg);
+      } catch {
+        this.tableLoading = false;
+      }
+    },
+    async moveToStart({ id }) {
+      try {
+        this.tableLoading = true;
+        const { msg } = await MenuService.moveToStar(id);
+        await this.getMenuTree();
+        this.$message.success(msg);
+      } catch {
+        this.tableLoading = false;
+      }
+    },
+    async moveToEnd({ id }) {
+      try {
+        this.tableLoading = true;
+        const { msg } = await MenuService.moveToEnd(id);
+        await this.getMenuTree();
+        this.$message.success(msg);
+      } catch {
+        this.tableLoading = false;
+      }
     },
     addRecord() {
       this.modalVisible = true;
