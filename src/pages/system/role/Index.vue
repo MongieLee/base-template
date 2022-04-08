@@ -4,21 +4,6 @@
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
-          <div class="action-item">
-            <div>资源名称：</div>
-            <a-input v-model="searchForm.name" placeholder="可输入资源名称" style="width:200px;" />
-          </div>
-          <div class="action-item">
-            <div>资源地址：</div>
-            <a-input v-model="searchForm.url" placeholder="可输入资源地址" style="width:200px;" />
-          </div>
-          <div class="action-item">
-            <div>资源名称：</div>
-            <a-tree-select style="width: 200px" allowClear v-model="searchForm.categroyId" placeholder="可选择所属分类"
-                           :replaceFields="{title:'name',key:'id',value:'id'}" :tree-data="menuTree" />
-          </div>
-          <a-button type="primary" @click="search" style="margin-right: 1em">查询</a-button>
-          <a-button type="primary" @click="reset" style="margin-right: 1em">重置</a-button>
           <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加
           </a-button>
         </div>
@@ -70,17 +55,10 @@ const getOriginForm = () => ({
   description: undefined,
   categroyId: undefined
 });
-const getSearchForm = () => ({
-  name: undefined,
-  description: undefined,
-  categroyId: undefined
-});
-
 export default {
-  name: 'Resource',
+  name: 'Menu',
   data() {
     return {
-      searchForm: getSearchForm(),
       modalForm: getOriginForm(),
       rules,
       columns,
@@ -88,7 +66,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 20
+        pageSize: 5
       },
       tableLoading: false,
       modalTitle: '弹窗',
@@ -110,22 +88,12 @@ export default {
         this.menuTree = data;
       });
     },
-    search() {
-      this.pagination.current = 1;
-      this.getList();
-    },
-    reset() {
-      this.searchForm = getSearchForm();
-      this.pagination.current = 1;
-      this.getList();
-    },
     async getList() {
       this.tableLoading = true;
       try {
         const { data: { records, total } } = await ResourceService.getList({
           page: this.pagination.current,
-          pageSize: this.pagination.pageSize,
-          ...this.searchForm
+          pageSize: this.pagination.pageSize
         });
         this.listData = records;
         this.pagination.total = total;
@@ -135,10 +103,7 @@ export default {
     },
     tableRowClass() {
     },
-    tableChange(pagination) {
-      this.pagination.current = pagination.current;
-      this.pagination.pageSize = pagination.pageSize;
-      this.getList();
+    tableChange() {
     },
     submitModal() {
       this.$refs.ruleForm.validate(async (valid) => {
@@ -195,6 +160,6 @@ export default {
 
 <style lang="less" scoped>
 .container {
-  padding: 0 12px 12px;
+  padding: 12px;
 }
 </style>

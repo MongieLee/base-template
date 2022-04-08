@@ -14,22 +14,50 @@ const routes = [
       {
         path: 'dashboard',
         name: 'About',
+        meta: {
+          title: '关于'
+        },
         component: () => import(/* webpackChunkName:"about"*/ 'pages/About.vue')
       },
       {
         path: 'system',
         redirect: '/system/menu',
+        meta: {
+          title: '系统管理'
+        },
         component: () => import(/* webpackChunkName:"emptyView" */ 'components/EmptyView'),
         children: [
           {
             path: 'menu',
             name: 'Menu',
+            meta: {
+              title: '菜单管理'
+            },
             component: () => import(/* webpackChunkName:"menu" */ 'pages/menu/Index.vue')
           },
           {
             path: 'resource',
             name: 'resource',
+            meta: {
+              title: '资源管理'
+            },
             component: () => import(/* webpackChunkName:"resource" */ 'pages/system/resource/Index.vue')
+          },
+          {
+            path: 'role',
+            name: 'role',
+            meta: {
+              title: '角色管理'
+            },
+            component: () => import(/* webpackChunkName:"resource" */ 'pages/system/role/Index.vue')
+          },
+          {
+            path: 'user',
+            name: 'user',
+            meta: {
+              title: '用户管理'
+            },
+            component: () => import(/* webpackChunkName:"user" */ 'pages/system/user/Index.vue')
           }
         ]
       }
