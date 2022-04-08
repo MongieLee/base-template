@@ -4,29 +4,18 @@
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
-          <div class="action-item">
-            <div>资源名称：</div>
-            <a-input v-model="searchForm.name" placeholder="可输入资源名称" style="width:200px;" />
-          </div>
-          <div class="action-item">
-            <div>资源地址：</div>
-            <a-input v-model="searchForm.url" placeholder="可输入资源地址" style="width:200px;" />
-          </div>
-          <div class="action-item">
-            <div>资源名称：</div>
-            <a-tree-select style="width: 200px" allowClear v-model="searchForm.categroyId" placeholder="可选择所属分类"
-                           :replaceFields="{title:'name',key:'id',value:'id'}" :tree-data="menuTree" />
-          </div>
-          <a-button type="primary" @click="search" style="margin-right: 1em">查询</a-button>
-          <a-button type="primary" @click="reset" style="margin-right: 1em">重置</a-button>
           <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加
           </a-button>
         </div>
       </template>
+      <template slot="avatar" slot-scope="{data}">
+        <a-avatar
+          :src="data || 'https://img1.baidu.com/it/u=4054175603,836973543&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=422'"></a-avatar>
+      </template>
       <template slot="operate" slot-scope="data">
-        <a @click="editRecord(data)">
-          <a-icon type="edit" />
-          编辑</a>
+        <point :status="data.status" />
+        <a @click="changeStatus(data)">
+          {{ data.status ? '封号' : '启用' }}</a>
         <simple-bar />
         <a class="red-text" @click="deleteRecord(data)">
           <a-icon type="delete" />
@@ -38,18 +27,14 @@
       <form>
         <a-form-model :model="modalForm" :rules="rules" ref="ruleForm"
                       v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
-          <a-form-model-item label="资源名称" prop="name">
+          <a-form-model-item label="用户名" prop="name">
             <a-input placeholder="请输入资源名称" v-model="modalForm.name" />
           </a-form-model-item>
-          <a-form-model-item label="资源地址" prop="url">
-            <a-input placeholder="请输入资源地址" v-model="modalForm.url" />
+          <a-form-model-item label="密码" prop="password">
+            <a-input type="password" placeholder="请输入资源地址" v-model="modalForm.url" />
           </a-form-model-item>
-          <a-form-model-item label="资源描述" prop="description">
-            <a-input placeholder="请输入资源描述" v-model="modalForm.description" />
-          </a-form-model-item>
-          <a-form-model-item label="所属分类" prop="categroyId">
-            <a-tree-select allowClear v-model="modalForm.categroyId" placeholder="可选择所属分类"
-                           :replaceFields="{title:'name',key:'id',value:'id'}" :tree-data="menuTree" />
+          <a-form-model-item label="确认密码" prop="verifyPassword">
+            <a-input placeholder="请输入资源描述" v-model="modalForm.verifyPassword" />
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -63,24 +48,19 @@ import { columns, rules } from './config';
 import ResourceService from 'services/system/resource';
 import _ from 'lodash';
 import MenuService from 'services/menu';
+import UserService from 'services/system/user';
+import Point from './components/Point';
 
 const getOriginForm = () => ({
-  name: undefined,
-  url: undefined,
-  description: undefined,
-  categroyId: undefined
+  username: undefined,
+  password: undefined,
+  verifyPassword: undefined
 });
-const getSearchForm = () => ({
-  name: undefined,
-  description: undefined,
-  categroyId: undefined
-});
-
 export default {
-  name: 'Resource',
+  name: 'Menu',
+  components: { Point },
   data() {
     return {
-      searchForm: getSearchForm(),
       modalForm: getOriginForm(),
       rules,
       columns,
@@ -101,7 +81,6 @@ export default {
     ...mapState('setting', ['contentHeight'])
   },
   created() {
-    this.getMenuTree();
     this.getList();
   },
   methods: {
@@ -110,22 +89,12 @@ export default {
         this.menuTree = data;
       });
     },
-    search() {
-      this.pagination.current = 1;
-      this.getList();
-    },
-    reset() {
-      this.searchForm = getSearchForm();
-      this.pagination.current = 1;
-      this.getList();
-    },
     async getList() {
       this.tableLoading = true;
       try {
-        const { data: { records, total } } = await ResourceService.getList({
+        const { data: { records, total } } = await UserService.getList({
           page: this.pagination.current,
-          pageSize: this.pagination.pageSize,
-          ...this.searchForm
+          pageSize: this.pagination.pageSize
         });
         this.listData = records;
         this.pagination.total = total;
@@ -135,10 +104,7 @@ export default {
     },
     tableRowClass() {
     },
-    tableChange(pagination) {
-      this.pagination.current = pagination.current;
-      this.pagination.pageSize = pagination.pageSize;
-      this.getList();
+    tableChange() {
     },
     submitModal() {
       this.$refs.ruleForm.validate(async (valid) => {
@@ -188,6 +154,16 @@ export default {
     },
     addRecord() {
       this.modalVisible = true;
+    },
+    async changeStatus({ status, username, id: userId }) {
+      this.tableLoading = true;
+      try {
+        await UserService.changeStatus({ status: status ? 0 : 1, userId });
+        this.$message.success(`用户【${username}】状态已设为${status ? '禁用' : '启用'}`);
+        this.getList();
+      } catch {
+        this.tableLoading = false;
+      }
     }
   }
 };
@@ -195,6 +171,6 @@ export default {
 
 <style lang="less" scoped>
 .container {
-  padding: 0 12px 12px;
+  padding: 12px;
 }
 </style>

@@ -2,7 +2,7 @@ import { getRequest, postRequest } from 'utils/request';
 
 class UserService {
   static getUserInfo(){
-    return getRequest("/v1/user/info")
+    return getRequest("/api/v1/user/info")
   }
 }
 

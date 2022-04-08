@@ -1,35 +1,26 @@
 <template>
   <div class="container" :style="`height: calc(100vh - ${contentHeight}px)`">
     <table-wrapper @change="tableChange" :data-source="listData" :columns="columns" :pagination="pagination"
-                   :row-class-name="tableRowClass" :loading="tableLoading">
+                   :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
-          <div class="action-item">
-            <div>资源名称：</div>
-            <a-input v-model="searchForm.name" placeholder="可输入资源名称" style="width:200px;" />
-          </div>
-          <div class="action-item">
-            <div>资源地址：</div>
-            <a-input v-model="searchForm.url" placeholder="可输入资源地址" style="width:200px;" />
-          </div>
-          <div class="action-item">
-            <div>资源名称：</div>
-            <a-tree-select style="width: 200px" allowClear v-model="searchForm.categroyId" placeholder="可选择所属分类"
-                           :replaceFields="{title:'name',key:'id',value:'id'}" :tree-data="menuTree" />
-          </div>
-          <a-button type="primary" @click="search" style="margin-right: 1em">查询</a-button>
-          <a-button type="primary" @click="reset" style="margin-right: 1em">重置</a-button>
           <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加
           </a-button>
         </div>
       </template>
       <template slot="operate" slot-scope="data">
         <a @click="editRecord(data)">
-          <a-icon type="edit" />
+          <a-icon type="edit"/>
           编辑</a>
-        <simple-bar />
+        <simple-bar/>
+        <a @click="allotMenu(data)">
+          分配菜单</a>
+        <simple-bar/>
+        <a @click="allotMenu(data)">
+          分配资源</a>
+        <simple-bar/>
         <a class="red-text" @click="deleteRecord(data)">
-          <a-icon type="delete" />
+          <a-icon type="delete"/>
           删除</a>
       </template>
     </table-wrapper>
@@ -38,18 +29,14 @@
       <form>
         <a-form-model :model="modalForm" :rules="rules" ref="ruleForm"
                       v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
-          <a-form-model-item label="资源名称" prop="name">
-            <a-input placeholder="请输入资源名称" v-model="modalForm.name" />
+          <a-form-model-item label="角色名称" prop="name">
+            <a-input placeholder="请输入角色名称" v-model="modalForm.name"/>
           </a-form-model-item>
-          <a-form-model-item label="资源地址" prop="url">
-            <a-input placeholder="请输入资源地址" v-model="modalForm.url" />
+          <a-form-model-item label="角色编码" prop="code">
+            <a-input placeholder="请输入角色编码" v-model="modalForm.code"/>
           </a-form-model-item>
-          <a-form-model-item label="资源描述" prop="description">
-            <a-input placeholder="请输入资源描述" v-model="modalForm.description" />
-          </a-form-model-item>
-          <a-form-model-item label="所属分类" prop="categroyId">
-            <a-tree-select allowClear v-model="modalForm.categroyId" placeholder="可选择所属分类"
-                           :replaceFields="{title:'name',key:'id',value:'id'}" :tree-data="menuTree" />
+          <a-form-model-item label="角色描述" prop="description">
+            <a-textarea :rows="5" allow-clear placeholder="请输入角色描述" v-model="modalForm.description"/>
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -58,29 +45,20 @@
 </template>
 
 <script>
-import { mapState } from 'vuex';
-import { columns, rules } from './config';
-import ResourceService from 'services/system/resource';
+import {mapState} from 'vuex';
+import {columns, rules} from './config';
+import RoleService from 'services/system/role';
 import _ from 'lodash';
-import MenuService from 'services/menu';
 
 const getOriginForm = () => ({
   name: undefined,
-  url: undefined,
+  code: undefined,
   description: undefined,
-  categroyId: undefined
 });
-const getSearchForm = () => ({
-  name: undefined,
-  description: undefined,
-  categroyId: undefined
-});
-
 export default {
-  name: 'Resource',
+  name: 'Role',
   data() {
     return {
-      searchForm: getSearchForm(),
       modalForm: getOriginForm(),
       rules,
       columns,
@@ -88,7 +66,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 20
+        pageSize: 5
       },
       tableLoading: false,
       modalTitle: '弹窗',
@@ -101,31 +79,21 @@ export default {
     ...mapState('setting', ['contentHeight'])
   },
   created() {
-    this.getMenuTree();
     this.getList();
   },
   methods: {
-    getMenuTree() {
-      MenuService.getMenuTree().then(({ data }) => {
-        this.menuTree = data;
-      });
-    },
-    search() {
-      this.pagination.current = 1;
-      this.getList();
-    },
-    reset() {
-      this.searchForm = getSearchForm();
-      this.pagination.current = 1;
-      this.getList();
+    allotMenu({id: roleId}) {
+      this.$router.push({
+        name: "allotMenu",
+        params: {roleId}
+      })
     },
     async getList() {
       this.tableLoading = true;
       try {
-        const { data: { records, total } } = await ResourceService.getList({
+        const {data: {records, total}} = await RoleService.getList({
           page: this.pagination.current,
-          pageSize: this.pagination.pageSize,
-          ...this.searchForm
+          pageSize: this.pagination.pageSize
         });
         this.listData = records;
         this.pagination.total = total;
@@ -133,12 +101,7 @@ export default {
         this.tableLoading = false;
       }
     },
-    tableRowClass() {
-    },
-    tableChange(pagination) {
-      this.pagination.current = pagination.current;
-      this.pagination.pageSize = pagination.pageSize;
-      this.getList();
+    tableChange() {
     },
     submitModal() {
       this.$refs.ruleForm.validate(async (valid) => {
@@ -147,9 +110,9 @@ export default {
         try {
           let res;
           if (!this.modalForm.id) {
-            res = await ResourceService.createResource(this.modalForm);
+            res = await RoleService.createRole(this.modalForm);
           } else {
-            res = await ResourceService.updateResource(this.modalForm);
+            res = await RoleService.updateRole(this.modalForm);
           }
           this.$message.success(res.msg);
         } finally {
@@ -168,15 +131,16 @@ export default {
 
     editRecord(data) {
       this.modalForm = _.cloneDeep(data);
+      this.modalTitle = "编辑角色"
       this.modalVisible = true;
     },
-    async deleteRecord({ id, name }) {
+    async deleteRecord({id, name}) {
       this.$modal.confirm({
         title: `确定要删除菜单【${name}】吗`,
         content: '该操作不可逆',
         onOk: () => {
           this.tableLoading = true;
-          ResourceService.deleteResource(id).then(res => {
+          RoleService.deleteRole(id).then(res => {
             this.$message.success(res.msg);
             this.getList();
           });
@@ -187,6 +151,7 @@ export default {
       });
     },
     addRecord() {
+      this.modalTitle = "新增角色";
       this.modalVisible = true;
     }
   }
@@ -195,6 +160,6 @@ export default {
 
 <style lang="less" scoped>
 .container {
-  padding: 0 12px 12px;
+  padding: 12px;
 }
 </style>

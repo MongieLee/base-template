@@ -20,18 +20,18 @@ import {
   Tabs,
   Tooltip,
   TreeSelect,
-  Popconfirm,
+  Popconfirm, Tree,
 } from "ant-design-vue";
 
 Vue.use(Modal); // use [Vue.component] won't register directive and throw directive Error
 Vue.prototype.$modal = Modal;
 
-const { Sider, Header, Content, Footer } = Layout;
-const { Item: BreadcrumbItem } = Breadcrumb;
-const { Item: MenuItem, SubMenu } = Menu;
-const { Item: FormModelItem } = FormModel;
-const { TabPane } = Tabs;
-
+const {Sider, Header, Content, Footer} = Layout;
+const {Item: BreadcrumbItem} = Breadcrumb;
+const {Item: MenuItem, SubMenu} = Menu;
+const {Item: FormModelItem} = FormModel;
+const {TabPane} = Tabs;
+const {TextArea} = Input
 Vue.prototype.$message = message;
 
 const components = [
@@ -62,7 +62,9 @@ const components = [
   TabPane,
   Tooltip,
   TreeSelect,
-  Popconfirm
+  Popconfirm,
+  TextArea,
+  Tree
 ];
 
 export const batchImport = (components) => {

@@ -3,7 +3,7 @@
     <content-menu :item-list="list" :visible.sync="menuVisible" @select="onMenuSelect" />
     <TabsHeader @contextmenu="onContextmenu" />
     <aside></aside>
-    <main>
+    <main :style="{height: `calc(100vh - ${contentHeight}px)`,overflow:`auto`}">
       <!--      <a-keep-alive :exclude-keys="excludeKeys">-->
       <!--        <router-view re="tabContent" />-->
       <!--      </a-keep-alive>-->
@@ -14,6 +14,7 @@
 
 <script>
 import TabsHeader from "./TabsHeader";
+import {mapState} from "vuex";
 
 export default {
   name: "layoutView",
@@ -30,6 +31,9 @@ export default {
         { text: "刷新页面", key: "refresh", icon: `sync` }
       ]
     };
+  },
+  computed: {
+    ...mapState('setting', ['contentHeight'])
   },
   methods: {
     onMenuSelect(key, target, pageKey) {

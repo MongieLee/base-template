@@ -1,4 +1,4 @@
-import UserService from 'services/user';
+import UserService from 'services/system/user';
 import { getToken, setToken } from 'utils/token';
 
 const storageAuthKey = '__user_info__';
@@ -16,10 +16,9 @@ export default {
   },
   actions: {
     async fetchUserInfo({ commit }) {
-      const result = await UserService.getUserInfo();
-      setToken(storageAuthKey,JSON.stringify(result.data))
-      commit('updateUser', { user: result.data });
-      console.log(result);
+      const { data } = await UserService.getUserInfo();
+      setToken(storageAuthKey, JSON.stringify(data));
+      commit('updateUser', { user: data });
     }
   }
 };
