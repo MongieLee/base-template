@@ -38,20 +38,15 @@ const columns = [
 
 const rules = {
   name: [
-    { required: true, trigger: 'change', message: '请输入菜单名' }
+    { required: true, trigger: 'change', message: '请输入用户名' }
   ],
   password: [
-    { required: true, trigger: 'change', message: '请输入资源地址' }
+    { required: true, trigger: 'change', message: '请输入密码' }
   ],
   verifyPassword: [
     {
       required: true,
-      validator: (rule, value, callback) => {
-        console.log(rule);
-        console.log(value);
-        console.log(rule);
-      },
-      trigger: 'change', message: '请选择资源所属分类'
+      trigger: 'change', message: '请输入确认密码'
     }
   ]
 };

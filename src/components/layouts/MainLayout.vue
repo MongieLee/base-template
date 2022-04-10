@@ -8,47 +8,40 @@
           <div class="system-name">珠海妇幼</div>
         </router-link>
       </div>
-      <MenuTree :menu-tree="menuData" />
+      <MenuTree :menu-tree="menuData"/>
     </a-layout-sider>
     <a-layout>
       <a-layout-header
-        style="
+          style="
           background: #fff;
           display: flex;
           justify-content: space-between;
           padding: 0 1rem;
         "
       >
-        <a-icon
-          class="trigger"
-          :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-          @click="() => (collapsed = !collapsed)"
-        />
-        <a-breadcrumb style="border:1px solid red;display: flex;align-items: center">
-          <a-breadcrumb-item href="">
-            <a-icon type="home" />
-          </a-breadcrumb-item>
-          <a-breadcrumb-item href="">
-            <a-icon type="user" />
-            <span>Application List</span>
-          </a-breadcrumb-item>
-          <a-breadcrumb-item>
-            Application
-          </a-breadcrumb-item>
-        </a-breadcrumb>
+        <div style="display: inline-flex;align-items: center;">
+
+          <a-icon
+              class="trigger"
+              :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+              @click="() => (collapsed = !collapsed)"
+          />
+          <bread-crumb/>
+        </div>
+
         <div>
-          <Header />
+          <Header/>
         </div>
       </a-layout-header>
       <a-layout-content
-        :style="{
+          :style="{
           margin: '24px 24px 0',
           background: '#fff',
         }">
-        <TabsView />
+        <TabsView/>
       </a-layout-content>
       <a-layout-footer style="padding:0">
-        <Footer />
+        <Footer/>
       </a-layout-footer>
     </a-layout>
   </a-layout>
@@ -60,13 +53,14 @@ import Footer from 'components/layouts/footer/Footer';
 import MenuTree from 'components/menu/MenuTree';
 
 import TabsView from 'components/layouts/tab/TabsView';
-import { mapMutations } from 'vuex';
-import { routes } from '@/router';
+import {mapMutations} from 'vuex';
+import {routes} from '@/router';
 import MenuService from 'services/menu';
+import BreadCrumb from "components/breadcrumb/BreadCrumb";
 
 export default {
   name: 'HomePage',
-  components: { Header, TabsView, Footer, MenuTree },
+  components: {BreadCrumb, Header, TabsView, Footer, MenuTree},
   data() {
     return {
       collapsed: false,
@@ -76,7 +70,7 @@ export default {
     };
   },
   created() {
-    this.correctContentHeight({ height: 160 });
+    this.correctContentHeight({height: 160});
     this.getMenuTree()
   },
   computed: {
@@ -87,7 +81,7 @@ export default {
   methods: {
     ...mapMutations('setting', ['correctContentHeight']),
     async getMenuTree() {
-      const { data } = await MenuService.getMenuTree();
+      const {data} = await MenuService.getMenuTree();
       this.menuData = data;
     }
   }

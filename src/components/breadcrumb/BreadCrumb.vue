@@ -1,7 +1,7 @@
 <template>
   <a-breadcrumb style="display:flex;align-items: center">
     <a-breadcrumb-item>
-      <a-icon type="home" />
+      <a-icon type="home"/>
     </a-breadcrumb-item>
     <template v-for="route in routeRecords">
       <a-breadcrumb-item v-if="route.meta.title" :key="route.path">

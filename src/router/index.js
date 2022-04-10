@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
-import { inspectTokenValidity } from 'utils/token';
-import { formatRoutes } from '@/router/helps/handlerRoutes';
+import {inspectTokenValidity} from 'utils/token';
+import {formatRoutes} from '@/router/helps/handlerRoutes';
 
 Vue.use(VueRouter);
 
@@ -18,18 +18,47 @@ const routes = [
       },
       {
         path: 'system',
+        meta: {title: "系統管理"},
         redirect: '/system/menu',
         component: () => import(/* webpackChunkName:"emptyView" */ 'components/EmptyView'),
         children: [
           {
             path: 'menu',
             name: 'Menu',
+            meta: {title: "菜單管理"},
             component: () => import(/* webpackChunkName:"menu" */ 'pages/menu/Index.vue')
           },
           {
             path: 'resource',
             name: 'resource',
+            meta: {title: "資源管理"},
             component: () => import(/* webpackChunkName:"resource" */ 'pages/system/resource/Index.vue')
+          },
+          {
+            path: 'role',
+            name: 'role',
+            meta: {title: "角色管理"},
+            component: () => import(/* webpackChunkName:"resource" */ 'pages/system/role/Index.vue')
+          },
+          {
+            path: "allotMenu/:roleId",
+            name: "allotMenu",
+            meta: {title: "分配菜單"},
+            props: true,
+            component: () => import("pages/system/role/components/AllotMenu.vue")
+          },
+          {
+            path: "allotResource/:roleId",
+            name: "allotResource",
+            meta: {title: "分配資源"},
+            props: true,
+            component: () => import("pages/system/role/components/AllotResource.vue")
+          },
+          {
+            path: 'user',
+            name: 'user',
+            meta: {title: "用戶管理"},
+            component: () => import(/* webpackChunkName:"resource" */ 'pages/system/user/Index.vue')
           }
         ]
       }
@@ -57,7 +86,7 @@ router.beforeEach((to, from, next) => {
     if (to.path === '/login') {
       next();
     } else {
-      next({ name: 'Login', replace: true });
+      next({name: 'Login', replace: true});
     }
   }
 });
@@ -88,13 +117,13 @@ const initRouter = (isAsync) => {
 /**
  * handler repeat jump of route
  */
-const { push, replace } = VueRouter.prototype;
-VueRouter.prototype.push = function(location) {
+const {push, replace} = VueRouter.prototype;
+VueRouter.prototype.push = function (location) {
   push.call(this, location).catch(err => err);
 };
-VueRouter.prototype.replace = function(location) {
+VueRouter.prototype.replace = function (location) {
   replace.call(this, location).catch(err => err);
 };
 
 export default router;
-export { routes, initRouter, ignoreRoutes };
+export {routes, initRouter, ignoreRoutes};

@@ -28,13 +28,13 @@
         <a-form-model :model="modalForm" :rules="rules" ref="ruleForm"
                       v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
           <a-form-model-item label="用户名" prop="name">
-            <a-input placeholder="请输入资源名称" v-model="modalForm.name" />
+            <a-input placeholder="请输入用户名" v-model="modalForm.name" />
           </a-form-model-item>
           <a-form-model-item label="密码" prop="password">
-            <a-input type="password" placeholder="请输入资源地址" v-model="modalForm.url" />
+            <a-input type="password" placeholder="请输入密码" v-model="modalForm.password" />
           </a-form-model-item>
           <a-form-model-item label="确认密码" prop="verifyPassword">
-            <a-input placeholder="请输入资源描述" v-model="modalForm.verifyPassword" />
+            <a-input placeholder="请输入确认密码" v-model="modalForm.verifyPassword" />
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -45,7 +45,6 @@
 <script>
 import { mapState } from 'vuex';
 import { columns, rules } from './config';
-import ResourceService from 'services/system/resource';
 import _ from 'lodash';
 import MenuService from 'services/menu';
 import UserService from 'services/system/user';
@@ -113,9 +112,9 @@ export default {
         try {
           let res;
           if (!this.modalForm.id) {
-            res = await ResourceService.createResource(this.modalForm);
+            res = await UserService.createResource(this.modalForm);
           } else {
-            res = await ResourceService.updateResource(this.modalForm);
+            res = await UserService.updateResource(this.modalForm);
           }
           this.$message.success(res.msg);
         } finally {
@@ -142,7 +141,7 @@ export default {
         content: '该操作不可逆',
         onOk: () => {
           this.tableLoading = true;
-          ResourceService.deleteResource(id).then(res => {
+          UserService.deleteResource(id).then(res => {
             this.$message.success(res.msg);
             this.getList();
           });

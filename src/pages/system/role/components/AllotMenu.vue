@@ -34,7 +34,6 @@ export default {
     }
   },
   created() {
-    console.log("allot menu")
     this.getMenuTree();
     this.getMenuByRoleId()
   },
@@ -43,6 +42,7 @@ export default {
   },
   methods: {
     async getMenuByRoleId() {
+      console.log(this.roleId);
       const {data} = await RoleService.getMenusByRoleId(this.roleId)
       this.checkedKeys = data;
     },
