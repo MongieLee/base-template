@@ -19,11 +19,23 @@
           padding: 0 1rem;
         "
       >
-        <div style="display: flex;">
-          <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-                  @click="() => (collapsed = !collapsed)" />
-          <bread-crumb />
-        </div>
+        <a-icon
+          class="trigger"
+          :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+          @click="() => (collapsed = !collapsed)"
+        />
+        <a-breadcrumb style="border:1px solid red;display: flex;align-items: center">
+          <a-breadcrumb-item href="">
+            <a-icon type="home" />
+          </a-breadcrumb-item>
+          <a-breadcrumb-item href="">
+            <a-icon type="user" />
+            <span>Application List</span>
+          </a-breadcrumb-item>
+          <a-breadcrumb-item>
+            Application
+          </a-breadcrumb-item>
+        </a-breadcrumb>
         <div>
           <Header />
         </div>
@@ -46,7 +58,7 @@
 import Header from 'components/layouts/header/Header.vue';
 import Footer from 'components/layouts/footer/Footer';
 import MenuTree from 'components/menu/MenuTree';
-import BreadCrumb from 'components/breadcrumb/BreadCrumb';
+
 import TabsView from 'components/layouts/tab/TabsView';
 import { mapMutations } from 'vuex';
 import { routes } from '@/router';
@@ -54,7 +66,7 @@ import MenuService from 'services/menu';
 
 export default {
   name: 'HomePage',
-  components: { Header, TabsView, Footer, MenuTree, BreadCrumb },
+  components: { Header, TabsView, Footer, MenuTree },
   data() {
     return {
       collapsed: false,
@@ -64,8 +76,8 @@ export default {
     };
   },
   created() {
-    this.correctContentHeight({ height: 174 });
-    this.getMenuTree();
+    this.correctContentHeight({ height: 160 });
+    this.getMenuTree()
   },
   computed: {
     menuWrapperWidth() {
