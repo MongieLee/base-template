@@ -21,9 +21,18 @@ const columns = [
     dataIndex: 'avatar'
   },
   {
+    title: '角色身份',
+    dataIndex: 'roles',
+    customRender(data) {
+      console.log(`data`);
+      console.log(data);
+      return data ? data : '暂未分配角色';
+    }
+  },
+  {
     title: '创建时间',
     customRender(data) {
-      return moment(data).format('YYYY-MM-DD HH:mm');
+      return moment(data).add(8, 'hour').format('YYYY-MM-DD HH:mm');
     },
     dataIndex: 'createdAt'
   },
@@ -37,17 +46,14 @@ const columns = [
 ];
 
 const rules = {
-  name: [
+  username: [
     { required: true, trigger: 'change', message: '请输入用户名' }
   ],
   password: [
     { required: true, trigger: 'change', message: '请输入密码' }
   ],
   verifyPassword: [
-    {
-      required: true,
-      trigger: 'change', message: '请输入确认密码'
-    }
+    { required: true, trigger: 'change', message: '请输入确认密码' }
   ]
 };
 

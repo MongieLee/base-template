@@ -17,6 +17,9 @@
         <a @click="changeStatus(data)">
           {{ data.status ? '封号' : '启用' }}</a>
         <simple-bar />
+        <a @click="allotRole(data)">
+          分配角色</a>
+        <simple-bar />
         <a class="red-text" @click="deleteRecord(data)">
           <a-icon type="delete" />
           删除</a>
@@ -27,14 +30,37 @@
       <form>
         <a-form-model :model="modalForm" :rules="rules" ref="ruleForm"
                       v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
-          <a-form-model-item label="用户名" prop="name">
-            <a-input placeholder="请输入用户名" v-model="modalForm.name" />
+          <a-form-model-item label="用户名" prop="username">
+            <a-input placeholder="请输入用户名" v-model="modalForm.username" />
           </a-form-model-item>
           <a-form-model-item label="密码" prop="password">
             <a-input type="password" placeholder="请输入密码" v-model="modalForm.password" />
           </a-form-model-item>
           <a-form-model-item label="确认密码" prop="verifyPassword">
             <a-input placeholder="请输入确认密码" v-model="modalForm.verifyPassword" />
+          </a-form-model-item>
+          <a-form-model-item label="头像">
+            <a-upload class="avatar-uploader" :show-upload-list="false" :before-upload="uploadAvatar">
+              <img v-if="modalForm.avatar" alt="avatar" :src="modalForm.avatar">
+              <div v-else>
+                <a-icon :type="avatarLoading ? 'loading' : 'plus'" />
+                <div class="ant-upload-text">
+                  Upload
+                </div>
+              </div>
+            </a-upload>
+          </a-form-model-item>
+        </a-form-model>
+      </form>
+    </a-modal>
+
+    <a-modal okText="保存" title="分配角色" :visible="roleVisible" @ok="submitModal" @cancel="modalCancel"
+             :maskClosable="false" width="70%" :confirmLoading="confirmLoading">
+      <form>
+        <a-form-model :model="modalForm" :rules="rules" ref="ruleForm"
+                      v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
+          <a-form-model-item label="角色（可多选）" prop="verifyPassword">
+            <a-input placeholder="请选择角色" v-model="modalForm.verifyPassword" />
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -48,7 +74,11 @@ import { columns, rules } from './config';
 import _ from 'lodash';
 import MenuService from 'services/menu';
 import UserService from 'services/system/user';
+import AuthService from 'services/auth';
 import Point from './components/Point';
+import Form from './components/Form';
+import FileService from 'services/file';
+import RoleService from 'services/system/role';
 
 const getOriginForm = () => ({
   username: undefined,
@@ -56,8 +86,8 @@ const getOriginForm = () => ({
   verifyPassword: undefined
 });
 export default {
-  name: 'Menu',
-  components: { Point },
+  name: 'User',
+  components: { Point, Form },
   data() {
     return {
       modalForm: getOriginForm(),
@@ -73,7 +103,9 @@ export default {
       modalTitle: '弹窗',
       modalVisible: false,
       confirmLoading: false,
-      menuTree: []
+      menuTree: [],
+      avatarLoading: false,
+      roleVisible:true
     };
   },
   computed: {
@@ -81,6 +113,7 @@ export default {
   },
   created() {
     this.getList();
+    RoleService.getAll()
   },
   methods: {
     getMenuTree() {
@@ -105,6 +138,23 @@ export default {
     },
     tableChange() {
     },
+    allotRole(data){
+      console.log(data);
+    },
+    async uploadAvatar(file) {
+      console.log(file);
+      const allowFileTypes = ['image/jpeg', 'image/png'];
+      if (!allowFileTypes.includes(file.type)) {
+        this.$message.error('请上传jpg或png格式的图片');
+        return;
+      }
+      this.avatarLoading = true;
+      const res = await FileService.uploadFile(FileService.getFormData(file));
+      console.log(res);
+      this.avatarLoading = false;
+      this.modalForm.avatar = res.data.path;
+      return Promise.reject();
+    },
     submitModal() {
       this.$refs.ruleForm.validate(async (valid) => {
         if (!valid) return;
@@ -112,9 +162,10 @@ export default {
         try {
           let res;
           if (!this.modalForm.id) {
-            res = await UserService.createResource(this.modalForm);
+            Reflect.deleteProperty(this.modalForm, 'verifyPassword');
+            res = await AuthService.register(this.modalForm);
           } else {
-            res = await UserService.updateResource(this.modalForm);
+            res = await UserService.updateUser(this.modalForm);
           }
           this.$message.success(res.msg);
         } finally {
@@ -135,16 +186,15 @@ export default {
       this.modalForm = _.cloneDeep(data);
       this.modalVisible = true;
     },
-    async deleteRecord({ id, name }) {
+    async deleteRecord({ id, username }) {
       this.$modal.confirm({
-        title: `确定要删除菜单【${name}】吗`,
+        title: `确定要删除用户【${username}】吗`,
         content: '该操作不可逆',
-        onOk: () => {
+        onOk: async () => {
           this.tableLoading = true;
-          UserService.deleteResource(id).then(res => {
-            this.$message.success(res.msg);
-            this.getList();
-          });
+          const { msg } = await UserService.deleteUser(id);
+          this.$message.success(msg);
+          this.getList();
         },
         onCancel: () => {
           this.$message.info('已取消删除操作');
@@ -168,8 +218,24 @@ export default {
 };
 </script>
 
-<style lang="less" scoped>
+<style lang="less" >
 .container {
   padding: 12px;
+}
+.avatar-uploader{
+  border:1px solid red;
+}
+.avatar-uploader > .ant-upload {
+  width: 128px;
+  height: 128px;
+}
+.ant-upload-select-picture-card i {
+  font-size: 32px;
+  color: #999;
+}
+
+.ant-upload-select-picture-card .ant-upload-text {
+  margin-top: 8px;
+  color: #666;
 }
 </style>

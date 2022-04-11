@@ -1,6 +1,8 @@
 <template>
   <div style="color:white">
-    <a-menu v-if="menuTree && menuTree.length" theme="dark" mode="inline" @click="to" :selectedKeys="selectedKeys">
+    <a-menu :defaultOpenKeys="['/system']" v-if="menuTree && menuTree.length" theme="dark" mode="inline"
+            @click="to"
+            :selectedKeys.sync="selectedKeys">
       <template v-for="menu in menuTree">
         <a-menu-item v-if="!menu.children.length" :key="menu.path">
           <a-icon :type="menu.icon || 'bug'" />
@@ -26,12 +28,21 @@ export default {
       required: true
     }
   },
+  created() {
+    this.getDefault();
+  },
   data() {
     return {
-      selectedKeys: []
+      selectedKeys: [],
+      openKeys: []
     };
   },
   methods: {
+    getDefault() {
+      const strings = this.$route.fullPath.split(`/`);
+      this.selectedKeys = ['/' + strings[strings.length - 1]];
+      this.openKeys = [`/` + strings[1]];
+    },
     to({ key, _, keyPath }) {
       if (linkReg.test(key)) {
         window.open(key);

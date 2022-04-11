@@ -6,7 +6,7 @@ const apiPath = {
   moveUp: '/api/v1/menu/moveUp/',
   moveDown: '/api/v1/menu/moveDown/',
   moveToStar: '/api/v1/menu/moveToStar/',
-  moveToEnd: '/api/v1/menu/moveToEnd/'
+  moveToEnd: '/api/v1/menu/moveToEnd/',
 };
 
 class MenuService {

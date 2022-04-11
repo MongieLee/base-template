@@ -1,5 +1,5 @@
 <template>
-  <a-card  title="分配菜单权限" style="border-bottom: none">
+  <a-card  title="分配资源权限" style="border-bottom: none">
     <a-button slot="extra" @click="$router.back()">返回</a-button>
     <a-tree
         v-if="menuTree.length"

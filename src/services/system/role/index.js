@@ -1,10 +1,12 @@
-import {deleteRequest, getRequest, postRequest, putRequest} from 'utils/request';
+import { deleteRequest, getRequest, postRequest, putRequest } from 'utils/request';
 
 const apiPath = {
   base: '/api/v1/role',
   getList: '/api/v1/role/list',
-  saveRoleMenus: "/api/v1/role/saveRoleMenus",
-  getMenusByRoleId: "/api/v1/role/getRoleMenus",
+  saveRoleMenus: '/api/v1/role/saveRoleMenus',
+  getMenusByRoleId: '/api/v1/role/getRoleMenus',
+  getMenusByUserInfo: '/api/v1/role/getMenusByUserInfo',
+  getAll: '/api/v1/role/getAll',
 };
 
 class RoleService {
@@ -25,11 +27,19 @@ class RoleService {
   }
 
   static saveRoleMenus(data) {
-    return postRequest(apiPath.saveRoleMenus, data)
+    return postRequest(apiPath.saveRoleMenus, data);
   }
 
   static getMenusByRoleId(roleId) {
-    return getRequest(apiPath.getMenusByRoleId + `/${roleId}`)
+    return getRequest(apiPath.getMenusByRoleId + `/${roleId}`);
+  }
+
+  getMenusByUserInfo() {
+    return getRequest(apiPath.getMenusByUserInfo);
+  }
+
+  static getAll() {
+    return getRequest(apiPath.getAll);
   }
 }
 

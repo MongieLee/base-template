@@ -5,18 +5,9 @@
       <template slot="header">
         <div ref="search" class="action-container">
           <div class="action-item">
-            <div>资源名称：</div>
+            <div>分类名称：</div>
             <a-input v-model="searchForm.name" placeholder="可输入资源名称" style="width:200px;" />
           </div>
-          <div class="action-item">
-            <div>资源地址：</div>
-            <a-input v-model="searchForm.url" placeholder="可输入资源地址" style="width:200px;" />
-          </div>
-          <div class="action-item">
-            <div>资源分类：</div>
-            <a-select  style="width: 200px"  allowClear v-model="searchForm.categroyId" placeholder="可选择所属分类" :options="menuTree" />
-          </div>
-          <a-button type="primary" @click="categroyManage" style="margin-right: 1em">分类管理</a-button>
           <a-button type="primary" @click="search" style="margin-right: 1em">查询</a-button>
           <a-button type="primary" @click="reset" style="margin-right: 1em">重置</a-button>
           <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加
@@ -38,17 +29,11 @@
       <form>
         <a-form-model :model="modalForm" :rules="rules" ref="ruleForm"
                       v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
-          <a-form-model-item label="资源名称" prop="name">
-            <a-input placeholder="请输入资源名称" v-model="modalForm.name" />
+          <a-form-model-item label="分类名称" prop="name">
+            <a-input placeholder="请输入分类名称" v-model="modalForm.name" />
           </a-form-model-item>
-          <a-form-model-item label="资源地址" prop="url">
-            <a-input placeholder="请输入资源地址" v-model="modalForm.url" />
-          </a-form-model-item>
-          <a-form-model-item label="资源描述" prop="description">
-            <a-input placeholder="请输入资源描述" v-model="modalForm.description" />
-          </a-form-model-item>
-          <a-form-model-item label="所属分类" prop="categroyId">
-            <a-select allowClear v-model="modalForm.categroyId" placeholder="可选择所属分类" :options="menuTree" />
+          <a-form-model-item label="排序" prop="url">
+            <a-input-number :min="0" placeholder="输入排序" v-model="modalForm.sequence" />
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -59,10 +44,8 @@
 <script>
 import { mapState } from 'vuex';
 import { columns, rules } from './config';
-import ResourceService from 'services/system/resource';
 import ResourceCategroyService from 'services/system/resourceCategroy';
 import _ from 'lodash';
-import MenuService from 'services/menu';
 
 const getOriginForm = () => ({
   name: undefined,
@@ -72,12 +55,11 @@ const getOriginForm = () => ({
 });
 const getSearchForm = () => ({
   name: undefined,
-  description: undefined,
-  categroyId: undefined
+  sequence: undefined,
 });
 
 export default {
-  name: 'Resource',
+  name: 'ResourceCategroy',
   data() {
     return {
       searchForm: getSearchForm(),
@@ -101,15 +83,9 @@ export default {
     ...mapState('setting', ['contentHeight'])
   },
   created() {
-    this.getMenuTree();
     this.getList();
   },
   methods: {
-    getMenuTree() {
-      ResourceCategroyService.getAll().then(({ data }) => {
-        this.menuTree = data.map(({ id: value, name: label }) => ({ value, label }));
-      });
-    },
     search() {
       this.pagination.current = 1;
       this.getList();
@@ -117,7 +93,7 @@ export default {
     categroyManage() {
       console.log(1);
       this.$router.push({
-        name: 'resourceCategroy'
+        name: 'categroyManage'
       });
     },
     reset() {
@@ -128,7 +104,7 @@ export default {
     async getList() {
       this.tableLoading = true;
       try {
-        const { data: { records, total } } = await ResourceService.getList({
+        const { data: { records, total } } = await ResourceCategroyService.getList({
           page: this.pagination.current,
           pageSize: this.pagination.pageSize,
           ...this.searchForm
@@ -153,9 +129,9 @@ export default {
         try {
           let res;
           if (!this.modalForm.id) {
-            res = await ResourceService.createResource(this.modalForm);
+            res = await ResourceCategroyService.createResourceCategroy(this.modalForm);
           } else {
-            res = await ResourceService.updateResource(this.modalForm);
+            res = await ResourceCategroyService.updateResourceCategroy(this.modalForm);
           }
           this.$message.success(res.msg);
         } finally {
@@ -182,7 +158,7 @@ export default {
         content: '该操作不可逆',
         onOk: () => {
           this.tableLoading = true;
-          ResourceService.deleteResource(id).then(res => {
+          ResourceCategroyService.deleteResourceCategroy(id).then(res => {
             this.$message.success(res.msg);
             this.getList();
           });

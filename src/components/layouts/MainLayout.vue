@@ -20,7 +20,6 @@
         "
       >
         <div style="display: inline-flex;align-items: center;">
-
           <a-icon
               class="trigger"
               :type="collapsed ? 'menu-unfold' : 'menu-fold'"
@@ -28,7 +27,6 @@
           />
           <bread-crumb/>
         </div>
-
         <div>
           <Header/>
         </div>

@@ -2,13 +2,14 @@ import Vue from 'vue';
 import VueRouter from 'vue-router';
 import {inspectTokenValidity} from 'utils/token';
 import {formatRoutes} from '@/router/helps/handlerRoutes';
-
+import NProgress from 'nprogress';
+NProgress.configure({ showSpinner: false })
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: '/',
-    redirect: '/about',
+    redirect: '/dashboard',
     component: () => import(/* webpackChunkName:"mainLayout" */ 'components/layouts/MainLayout.vue'),
     children: [
       {
@@ -35,6 +36,12 @@ const routes = [
             component: () => import(/* webpackChunkName:"resource" */ 'pages/system/resource/Index.vue')
           },
           {
+            path: 'resourceCategroy',
+            name: 'resourceCategroy',
+            meta: {title: "資源分类"},
+            component: () => import(/* webpackChunkName:"resource-categroy" */ 'pages/system/resourceCategroy/Index.vue')
+          },
+          {
             path: 'role',
             name: 'role',
             meta: {title: "角色管理"},
@@ -45,14 +52,14 @@ const routes = [
             name: "allotMenu",
             meta: {title: "分配菜單"},
             props: true,
-            component: () => import("pages/system/role/components/AllotMenu.vue")
+            component: () => import(/* webpackChunkName:"allotMenu" */ "pages/system/role/components/AllotMenu.vue")
           },
           {
             path: "allotResource/:roleId",
             name: "allotResource",
             meta: {title: "分配資源"},
             props: true,
-            component: () => import("pages/system/role/components/AllotResource.vue")
+            component: () => import(/* webpackChunkName:"allot-resource" */ "pages/system/role/components/AllotResource.vue")
           },
           {
             path: 'user',
@@ -78,15 +85,29 @@ const routes = [
 const router = new VueRouter({
   routes
 });
+const startNprogress = () => {
+  console.log(NProgress.isStarted);
+  if (!NProgress.isStarted()) {
+    console.log(1);
+    NProgress.start();
+    NProgress.inc()
+  }
+};
 
+const nprogressEnd = () => {
+  console.log(2);
+  NProgress.done();
+};
 router.beforeEach((to, from, next) => {
+  startNprogress()
   if (inspectTokenValidity()) {
-    next();
+      next();
+      nprogressEnd();
   } else {
     if (to.path === '/login') {
       next();
     } else {
-      next({name: 'Login', replace: true});
+        next({name: 'Login', replace: true});
     }
   }
 });
