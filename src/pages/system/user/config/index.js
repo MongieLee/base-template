@@ -22,10 +22,8 @@ const columns = [
   },
   {
     title: '角色身份',
-    dataIndex: 'roles',
+    dataIndex: 'roleNames',
     customRender(data) {
-      console.log(`data`);
-      console.log(data);
       return data ? data : '暂未分配角色';
     }
   },

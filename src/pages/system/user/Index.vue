@@ -54,13 +54,13 @@
       </form>
     </a-modal>
 
-    <a-modal okText="保存" title="分配角色" :visible="roleVisible" @ok="submitModal" @cancel="modalCancel"
+    <a-modal okText="保存" title="分配角色" :visible="roleVisible" @ok="allotRoles" @cancel="roleModalFromCancel"
              :maskClosable="false" width="70%" :confirmLoading="confirmLoading">
       <form>
-        <a-form-model :model="modalForm" :rules="rules" ref="ruleForm"
+        <a-form-model :model="modalForm" :rules="rules" ref="roleForm"
                       v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
-          <a-form-model-item label="角色（可多选）" prop="verifyPassword">
-            <a-input placeholder="请选择角色" v-model="modalForm.verifyPassword" />
+          <a-form-model-item label="角色（可多选）" prop="roleIds">
+            <a-select :options="roleSelectList" v-model="modalForm.roleIds" mode="multiple" />
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -105,7 +105,11 @@ export default {
       confirmLoading: false,
       menuTree: [],
       avatarLoading: false,
-      roleVisible:true
+      roleVisible: false,
+      roleSelectList: [],
+      roleForm: {
+        roleIds: []
+      }
     };
   },
   computed: {
@@ -113,7 +117,9 @@ export default {
   },
   created() {
     this.getList();
-    RoleService.getAll()
+    RoleService.getAll().then(res => {
+      this.roleSelectList = res.data.map(i => ({ key: i.id, label: i.name }));
+    });
   },
   methods: {
     getMenuTree() {
@@ -138,8 +144,28 @@ export default {
     },
     tableChange() {
     },
-    allotRole(data){
+    allotRole(data) {
+      this.modalForm = _.cloneDeepWith(data);
+      this.roleVisible = true;
       console.log(data);
+    },
+    async allotRoles() {
+      const { id: userId } = this.modalForm;
+      const data = {
+        userId,
+        roleIds: this.modalForm.roleIds
+      };
+      try {
+        await RoleService.bindRoles(data);
+        this.$message.success('分配角色成功');
+        this.getList();
+      } finally {
+        this.roleModalFromCancel();
+      }
+    },
+    roleModalFromCancel() {
+      this.roleVisible = false;
+      this.modalForm = getOriginForm();
     },
     async uploadAvatar(file) {
       console.log(file);
@@ -218,17 +244,20 @@ export default {
 };
 </script>
 
-<style lang="less" >
+<style lang="less">
 .container {
   padding: 12px;
 }
-.avatar-uploader{
-  border:1px solid red;
+
+.avatar-uploader {
+  border: 1px solid red;
 }
+
 .avatar-uploader > .ant-upload {
   width: 128px;
   height: 128px;
 }
+
 .ant-upload-select-picture-card i {
   font-size: 32px;
   color: #999;
