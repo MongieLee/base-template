@@ -1,9 +1,9 @@
 <template>
   <div style="color:white">
-    <a-menu :defaultOpenKeys="['/system']" v-if="menuTree && menuTree.length" theme="dark" mode="inline"
-            @click="to"
+    <a-menu :defaultOpenKeys="['/system']" v-if="menuTree && menuTree.length" theme="dark" mode="inline" @click="to"
             :selectedKeys.sync="selectedKeys">
       <template v-for="menu in menuTree">
+<!--        {{menu.children.length}}-->
         <a-menu-item v-if="!menu.children.length" :key="menu.path">
           <a-icon :type="menu.icon || 'bug'" />
           <span>{{ menu.name }}</span>
@@ -29,6 +29,8 @@ export default {
     }
   },
   created() {
+    console.log('menuTree:');
+    console.log(this.menuTree);
     this.getDefault();
   },
   data() {

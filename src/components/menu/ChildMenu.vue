@@ -6,10 +6,10 @@
     </span>
     <template v-for="menu in props.menu.children">
       <a-menu-item :key="menu.path" v-if="!menu.children.length">
-        <a-icon  :type="menu.icon || 'bug'" />
+        <a-icon :type="menu.icon || 'bug'" />
         <span>{{ menu.name }}</span>
       </a-menu-item>
-      <ChildMenu v-else :key="menu.path" :props="menu" />
+      <ChildMenu v-else :key="menu.path" :menu="menu" />
     </template>
   </a-sub-menu>
 </template>
@@ -22,6 +22,6 @@ export default {
       type: Object,
       required: true
     }
-  },
+  }
 };
 </script>

@@ -8,11 +8,12 @@
           <div class="system-name">珠海妇幼</div>
         </router-link>
       </div>
-      <MenuTree :menu-tree="menuData"/>
+      <MenuTree :menu-tree="menuData" />
+      <!--      <MenuTree/>-->
     </a-layout-sider>
     <a-layout>
       <a-layout-header
-          style="
+        style="
           background: #fff;
           display: flex;
           justify-content: space-between;
@@ -21,25 +22,25 @@
       >
         <div style="display: inline-flex;align-items: center;">
           <a-icon
-              class="trigger"
-              :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-              @click="() => (collapsed = !collapsed)"
+            class="trigger"
+            :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+            @click="() => (collapsed = !collapsed)"
           />
-          <bread-crumb/>
+          <bread-crumb />
         </div>
         <div>
-          <Header/>
+          <Header />
         </div>
       </a-layout-header>
       <a-layout-content
-          :style="{
+        :style="{
           margin: '24px 24px 0',
           background: '#fff',
         }">
-        <TabsView/>
+        <TabsView />
       </a-layout-content>
       <a-layout-footer style="padding:0">
-        <Footer/>
+        <Footer />
       </a-layout-footer>
     </a-layout>
   </a-layout>
@@ -51,14 +52,16 @@ import Footer from 'components/layouts/footer/Footer';
 import MenuTree from 'components/menu/MenuTree';
 
 import TabsView from 'components/layouts/tab/TabsView';
-import {mapMutations} from 'vuex';
-import {routes} from '@/router';
+import { mapMutations } from 'vuex';
+import { routes } from '@/router';
 import MenuService from 'services/menu';
-import BreadCrumb from "components/breadcrumb/BreadCrumb";
+import BreadCrumb from 'components/breadcrumb/BreadCrumb';
+import { __auth_token_key__ } from 'utils/token';
+import RoleService from 'services/system/role';
 
 export default {
   name: 'HomePage',
-  components: {BreadCrumb, Header, TabsView, Footer, MenuTree},
+  components: { BreadCrumb, Header, TabsView, Footer, MenuTree },
   data() {
     return {
       collapsed: false,
@@ -68,8 +71,12 @@ export default {
     };
   },
   created() {
-    this.correctContentHeight({height: 160});
-    this.getMenuTree()
+    console.log('------------1');
+    console.log(this.roleId);
+    console.log(this.$store.state);
+    console.log('------------1');
+    this.correctContentHeight({ height: 160 });
+    this.getMenuTree();
   },
   computed: {
     menuWrapperWidth() {
@@ -79,7 +86,12 @@ export default {
   methods: {
     ...mapMutations('setting', ['correctContentHeight']),
     async getMenuTree() {
-      const {data} = await MenuService.getMenuTree();
+      const jwtPayload = localStorage.getItem(__auth_token_key__).split('.')[1];
+      const parse = JSON.parse(atob(jwtPayload));
+      const userId = parse.userId;
+      console.log(userId);
+      const { data } = await MenuService.getMenuTree();
+      // const { data } = await RoleService.getUserMenus(userId)
       this.menuData = data;
     }
   }

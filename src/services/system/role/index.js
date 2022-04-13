@@ -7,7 +7,8 @@ const apiPath = {
   getMenusByRoleId: '/api/v1/role/getRoleMenus',
   getMenusByUserInfo: '/api/v1/role/getMenusByUserInfo',
   getAll: '/api/v1/role/getAll',
-  bindRoles: '/api/v1/role/bindRoles'
+  bindRoles: '/api/v1/role/bindRoles',
+  getUserMenus: '/api/v1/menu/getUserMenus/'
 };
 
 class RoleService {
@@ -45,6 +46,11 @@ class RoleService {
 
   static bindRoles(data) {
     return postRequest(apiPath.bindRoles, data);
+  }
+
+  static getUserMenus(userId) {
+    console.log({ userId });
+    return getRequest(apiPath.getUserMenus + userId);
   }
 }
 

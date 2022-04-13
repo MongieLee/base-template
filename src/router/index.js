@@ -102,7 +102,6 @@ router.beforeEach((to, from, next) => {
   startNprogress()
   if (inspectTokenValidity()) {
       next();
-      nprogressEnd();
   } else {
     if (to.path === '/login') {
       next();
@@ -110,6 +109,7 @@ router.beforeEach((to, from, next) => {
         next({name: 'Login', replace: true});
     }
   }
+  nprogressEnd();
 });
 
 /**
