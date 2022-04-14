@@ -7,11 +7,16 @@ const storageAuthKey = '__user_info__';
 export default {
   namespaced: true,
   state: {
-    user: JSON.parse(getToken(storageAuthKey) || 'null')
+    user: JSON.parse(getToken(storageAuthKey) || 'null'),
+    permissionCollection: []
   },
   mutations: {
     updateUser(state, { user }) {
       state.user = user;
+    },
+    updatePermissionCollection(state, { permissionCollection }) {
+      console.log("run");
+      state.permissionCollection = permissionCollection;
     }
   },
   actions: {

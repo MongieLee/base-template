@@ -5,11 +5,13 @@
       <span>{{ props.menu.name }}</span>
     </span>
     <template v-for="menu in props.menu.children">
-      <a-menu-item :key="menu.path" v-if="!menu.children.length">
-        <a-icon :type="menu.icon || 'bug'" />
-        <span>{{ menu.name }}</span>
-      </a-menu-item>
-      <ChildMenu v-else :key="menu.path" :menu="menu" />
+      <template v-if="menu.visible">
+        <a-menu-item :key="menu.path" v-if="!menu.children.length">
+          <a-icon :type="menu.icon || 'bug'" />
+          <span>{{ menu.name }}</span>
+        </a-menu-item>
+        <ChildMenu v-else :key="menu.path" :menu="menu" />
+      </template>
     </template>
   </a-sub-menu>
 </template>

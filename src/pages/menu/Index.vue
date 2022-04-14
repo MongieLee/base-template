@@ -8,6 +8,17 @@
           </a-button>
         </div>
       </template>
+      <template slot="icon" slot-scope="{data}">
+        <template v-if="data">
+          <a-icon :type="data" />
+        </template>
+        <span v-else>未设置</span>
+      </template>
+      <template slot="visible" slot-scope="{data}">
+        <a-tag :color="data?'blue':'red'">
+          {{ data ? '正常' : '隐藏' }}
+        </a-tag>
+      </template>
       <template slot="operate" slot-scope="data">
         <a @click="editRecord(data)">
           <a-icon type="edit" />
@@ -42,27 +53,39 @@
           删除</a>
       </template>
     </table-wrapper>
+
     <a-modal okText="保存 " :title="modalTitle" :visible="modalVisible" @ok="submitModal" @cancel="modalCancel"
-             :maskClosable="false" width="70%" :confirmLoading="confirmLoading">
+             :maskClosable="false" width="50%" :confirmLoading="confirmLoading">
       <form>
         <a-form-model
-          :model="modalForm"
-          :rules="rules"
-          ref="ruleForm"
-          v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }"
-        >
+          :model="modalForm" :rules="rules" ref="ruleForm" v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
           <a-form-model-item label="菜单名" prop="name">
             <a-input placeholder="请输入菜单名" v-model="modalForm.name" />
           </a-form-model-item>
           <a-form-model-item label="路由或外链" prop="path">
-            <a-input
-              placeholder="请输入路由或外联"
-              v-model="modalForm.path"
-            />
+            <a-input placeholder="请输入路由或外联" v-model="modalForm.path" />
           </a-form-model-item>
           <a-form-model-item label="父级菜单" prop="parentId">
             <a-tree-select allowClear v-model="modalForm.parentId" placeholder="可选择父级菜单"
                            :replaceFields="{title:'name',key:'id',value:'id'}" :tree-data="menuTree"></a-tree-select>
+          </a-form-model-item>
+          <a-form-model-item label="菜单图标代码">
+            <a-input placeholder="可输入菜单图标代码" v-model="modalForm.icon" />
+          </a-form-model-item>
+          <a-form-model-item label="排序">
+            <a-input-number style="width:100%" placeholder="可输入排序" v-model="modalForm.sequence" />
+          </a-form-model-item>
+          <a-form-model-item label="菜单类型">
+            <a-radio-group :options="typeSelectList" v-model="modalForm.menuType" />
+          </a-form-model-item>
+          <a-form-model-item label="菜单类型">
+            <a-radio-group :options="[{label:`显示`,value:true},{label:`隐藏`,value:false}]" v-model="modalForm.visible" />
+          </a-form-model-item>
+          <a-form-model-item label="权限标识">
+            <a-input placeholder="可输入权限" v-model="modalForm.permission" />
+          </a-form-model-item>
+          <a-form-model-item label="备注">
+            <a-input placeholder="可输入备注" v-model="modalForm.remark" />
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -72,14 +95,28 @@
 
 <script>
 import { mapState } from 'vuex';
-import { columns, rules } from './config';
+import { columns, rules, menuTypeEnum } from './config';
 import MenuService from 'services/menu';
 import _ from 'lodash';
 
+const typeSelectList = [];
+for (let i in menuTypeEnum) {
+  typeSelectList.push({
+    label: menuTypeEnum[i],
+    value: i
+  });
+}
+
 const getOriginForm = () => ({
-  name: undefined,
-  path: undefined,
-  parentId: undefined
+  name: undefined, // 菜单名称
+  path: undefined, // 路由或外链
+  parentId: undefined, // 父级菜单ID
+  remark: undefined, // 备注
+  permission: undefined, // 权限标识
+  sequence: undefined, // 当前层级排序
+  icon: undefined, // 图标代码
+  menuType: undefined, // 菜单类型
+  visible: undefined // 是否显示
 });
 export default {
   name: 'Menu',
@@ -93,7 +130,8 @@ export default {
       tableLoading: false,
       modalTitle: '弹窗',
       modalVisible: false,
-      confirmLoading: false
+      confirmLoading: false,
+      typeSelectList
     };
   },
   computed: {
@@ -211,6 +249,10 @@ export default {
       }
     },
     addRecord() {
+      if (!this.$store.state.auth.permissionCollection.includes('TESTaDD')) {
+        this.$message.info('没有操作权限');
+        return;
+      }
       this.modalVisible = true;
     }
   }

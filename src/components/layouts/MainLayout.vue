@@ -89,7 +89,6 @@ export default {
       const jwtPayload = localStorage.getItem(__auth_token_key__).split('.')[1];
       const parse = JSON.parse(atob(jwtPayload));
       const userId = parse.userId;
-      console.log(userId);
       const { data } = await MenuService.getMenuTree();
       // const { data } = await RoleService.getUserMenus(userId)
       this.menuData = data;
@@ -102,7 +101,7 @@ export default {
 #components-layout-demo-custom-trigger {
   height: 100vh;
   overflow: auto;
-  min-width: 960px;
+  min-width: 1280px;
 }
 
 #components-layout-demo-custom-trigger .trigger {
