@@ -36,7 +36,6 @@ export default {
   },
   watch:{
     value(newValue){
-      console.log("newValue:"+newValue);
       if(newValue !== this.value){
         this.instance.txt.html(this.value);
       }

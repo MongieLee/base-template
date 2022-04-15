@@ -15,7 +15,7 @@ const columns = [
     title: '父级菜单',
     dataIndex: 'parentName',
     customRender(data) {
-      return data ? data : '-';
+      return data
     }
   },
   {
@@ -44,7 +44,7 @@ const columns = [
     title: '权限标识',
     dataIndex: 'permission',
     customRender(data) {
-      return data || '-';
+      return data
     }
   },
   {

@@ -9,7 +9,6 @@
         </router-link>
       </div>
       <MenuTree :menu-tree="menuData" />
-      <!--      <MenuTree/>-->
     </a-layout-sider>
     <a-layout>
       <a-layout-header
@@ -71,10 +70,6 @@ export default {
     };
   },
   created() {
-    console.log('------------1');
-    console.log(this.roleId);
-    console.log(this.$store.state);
-    console.log('------------1');
     this.correctContentHeight({ height: 160 });
     this.getMenuTree();
   },
@@ -89,8 +84,8 @@ export default {
       const jwtPayload = localStorage.getItem(__auth_token_key__).split('.')[1];
       const parse = JSON.parse(atob(jwtPayload));
       const userId = parse.userId;
-      const { data } = await MenuService.getMenuTree();
-      // const { data } = await RoleService.getUserMenus(userId)
+      // const { data } = await MenuService.getMenuTree();
+      const { data } = await RoleService.getUserMenus(userId)
       this.menuData = data;
     }
   }

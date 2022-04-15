@@ -5,8 +5,8 @@
       <template v-for="menu in menuTree">
         <!--        {{menu.children.length}}-->
         <template v-if="menu.visible">
-          <a-menu-item v-if="!menu.children.length" :key="menu.path">
-            <a-icon :type="menu.icon || 'bug'" />
+          <a-menu-item v-if="!menu.children.length || menu.menuType === menuTypeEnum.C" :key="menu.path">
+            <a-icon :type="menu.icon || 'none'" />
             <span>{{ menu.name }}</span>
           </a-menu-item>
           <child-menu :key="menu.path" v-else :menu="menu" />
@@ -22,6 +22,7 @@ import { __auth_token_key__ } from 'utils/token';
 import MenuService from 'services/menu';
 
 const linkReg = new RegExp(/^http(s)?:\/\/\w+/);
+import { menuTypeEnum } from 'pages/menu/config';
 
 export default {
   name: 'MenuTree',
@@ -34,7 +35,8 @@ export default {
     return {
       selectedKeys: [],
       openKeys: [],
-      menuTree: []
+      menuTree: [],
+      menuTypeEnum
     };
   },
   methods: {
@@ -62,12 +64,17 @@ export default {
     },
     setPermissionKeys(list, result) {
       list.map(i => {
+        if (i.permission) {
+          result.push(i.permission);
+        }
         if (i.children.length) {
           i.children.map(c => {
+            console.log(c.name + c.permission);
             if (c.permission) {
               result.push(c.permission);
             }
             if (c.children.length) {
+              console.log('菜单有子组件');
               this.setPermissionKeys(c.children, result);
             }
           });

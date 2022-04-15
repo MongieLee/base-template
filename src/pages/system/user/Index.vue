@@ -12,8 +12,10 @@
         <a-avatar
           :src="data || 'https://img1.baidu.com/it/u=4054175603,836973543&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=422'"></a-avatar>
       </template>
+      <template slot="status" slot-scope="{data}">
+        <a-tag :color="data?`green`:`red`">{{ data ? '正常' : '封号' }}</a-tag>
+      </template>
       <template slot="operate" slot-scope="data">
-        <point :status="data.status" />
         <a @click="changeStatus(data)">
           {{ data.status ? '封号' : '启用' }}</a>
         <simple-bar />
@@ -75,8 +77,6 @@ import _ from 'lodash';
 import MenuService from 'services/menu';
 import UserService from 'services/system/user';
 import AuthService from 'services/auth';
-import Point from './components/Point';
-import Form from './components/Form';
 import FileService from 'services/file';
 import RoleService from 'services/system/role';
 
@@ -87,7 +87,6 @@ const getOriginForm = () => ({
 });
 export default {
   name: 'User',
-  components: { Point, Form },
   data() {
     return {
       modalForm: getOriginForm(),

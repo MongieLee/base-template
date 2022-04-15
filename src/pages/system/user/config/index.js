@@ -28,6 +28,15 @@ const columns = [
     }
   },
   {
+    title: '状态',
+    dataIndex: 'status',
+    scopedSlots: {
+      customRender: 'status'
+    },
+    width: 60,
+    align: 'center'
+  },
+  {
     title: '创建时间',
     customRender(data) {
       return moment(data).add(8, 'hour').format('YYYY-MM-DD HH:mm');

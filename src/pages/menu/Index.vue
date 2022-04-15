@@ -4,7 +4,8 @@
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
-          <a-button :loading="tableLoading" type="primary" @click="addRecord" style="margin-right: 1em">添加
+          <a-button :loading="tableLoading" v-permission='"menu:add"' type="primary" @click.native="addRecord"
+                    style="margin-right: 1em">添加
           </a-button>
         </div>
       </template>
@@ -19,39 +20,38 @@
           {{ data ? '正常' : '隐藏' }}
         </a-tag>
       </template>
-      <template slot="operate" slot-scope="data">
-        <a @click="editRecord(data)">
+      <div class="operation-btns" slot="operate" slot-scope="data">
+        <a v-permission='"menu:edit"' @click="editRecord(data)">
           <a-icon type="edit" />
-          编辑</a>
-        <simple-bar />
-        <a-popconfirm title="确定移动至最前吗？" @confirm="moveToStart(data)">
+          修改</a>
+        <a-popconfirm v-permission='"menu:moveToStart"' title="确定移动至最前吗？" @confirm="moveToStart(data)">
           <a>
             <a-icon style="color: #1d8f20" type="vertical-align-top" />
           </a>
         </a-popconfirm>
-        <simple-bar />
-        <a-popconfirm title="确定上移一位吗？" @confirm="moveUp(data)">
+
+        <a-popconfirm v-permission='"menu:moveUo"' title="确定上移一位吗？" @confirm="moveUp(data)">
           <a>
             <a-icon style="color: #1d8f20" type="up-square" />
           </a>
         </a-popconfirm>
-        <simple-bar />
-        <a-popconfirm title="确定下移一位吗？" @confirm="moveDown(data)">
+        <a-popconfirm v-permission='"menu:moveDown"' title="确定下移一位吗？" @confirm="moveDown(data)">
           <a>
             <a-icon style="color: #efa828" type="down-square" />
           </a>
         </a-popconfirm>
-        <simple-bar />
-        <a-popconfirm title="确定移动至最后吗？" @confirm="moveToEnd(data)">
+
+        <a-popconfirm v-permission='"menu:moveToEnd"' title="确定移动至最后吗？" @confirm="moveToEnd(data)">
           <a>
             <a-icon style="color: #efa828" type="vertical-align-bottom" />
           </a>
         </a-popconfirm>
-        <simple-bar />
-        <a class="red-text" @click="deleteRecord(data)">
-          <a-icon type="delete" />
-          删除</a>
-      </template>
+        <template>
+          <a class="red-text" v-permission='"menu:delete"' @click="deleteRecord(data)">
+            <a-icon type="delete" />
+            删除</a>
+        </template>
+      </div>
     </table-wrapper>
 
     <a-modal okText="保存 " :title="modalTitle" :visible="modalVisible" @ok="submitModal" @cancel="modalCancel"
@@ -249,10 +249,6 @@ export default {
       }
     },
     addRecord() {
-      if (!this.$store.state.auth.permissionCollection.includes('TESTaDD')) {
-        this.$message.info('没有操作权限');
-        return;
-      }
       this.modalVisible = true;
     }
   }

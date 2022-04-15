@@ -3,7 +3,8 @@ export default {
   state: {
     contentHeight: 0,
     multiPage: true, // tab是否多标签页
-    fixedTabs: false
+    fixedTabs: false,
+
   },
   mutations: {
     correctContentHeight(state, { height }) {
@@ -11,6 +12,7 @@ export default {
     },
     changeTabsFixed(state, { status }) {
       state.fixedTabs = status;
-    }
+    },
+
   }
 };

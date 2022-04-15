@@ -16,12 +16,6 @@
 
 export default {
   name: 'BreadCrumb',
-  watch: {
-    $route(to, form) {
-      console.log(to);
-      console.log(form);
-    }
-  },
   computed: {
     routeRecords() {
       console.log(this.$route.matched);
