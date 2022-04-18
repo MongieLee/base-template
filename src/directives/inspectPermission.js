@@ -8,12 +8,10 @@ Vue.directive('permission', {
   inserted(el, binding, vnode) {
     const { value } = binding;
     const { permissionCollection } = store.state.auth;
-    if (!permissionCollection.includes(value)) {
-      el.style.display = 'none';
-      console.log("irun");
-    }else{
-      console.log("irun2");
-      el.style.display = 'block';
-    }
+    // if (!permissionCollection.includes(value)) {
+    //   el.style.display = 'none';
+    // } else {
+    //   el.style.display = 'block';
+    // }
   }
 });

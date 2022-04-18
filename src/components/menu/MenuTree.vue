@@ -1,7 +1,8 @@
 <template>
   <div style="color:white">
     <a-menu v-if="menuTree && menuTree.length" theme="dark" mode="inline" @click="to"
-            :defaultOpenKeys="openKeys" :selectedKeys="selectedKeys">
+            :openKeys="openKeys" :selectedKeys="selectedKeys" @update:openKeys="changeOpen">
+      <!-- collapsed ? [] : openKeys"的作用是取消收缩时会弹出子级菜单的默认行为，openKeys为空便不会再展开 -->
       <template v-for="menu in menuTree">
         <!--        {{menu.children.length}}-->
         <template v-if="menu.visible">
@@ -20,27 +21,50 @@
 import ChildMenu from 'components/menu/ChildMenu';
 import { __auth_token_key__ } from 'utils/token';
 import MenuService from 'services/menu';
-
-const linkReg = new RegExp(/^http(s)?:\/\/\w+/);
 import { menuTypeEnum } from 'pages/menu/config';
+
+// 正则匹配是否外链
+const linkReg = new RegExp(/^http(s)?:\/\/\w+/);
 
 export default {
   name: 'MenuTree',
   components: { ChildMenu },
+  props: {
+    collapsed: {
+      type: Boolean,
+      required: false,
+      default: false
+    }
+  },
   created() {
     this.getMenuTree();
-    this.getDefault();
+    this.getSelectedAndOpeKeys();
   },
   data() {
     return {
       selectedKeys: [],
       openKeys: [],
+      cacheOpenKeys: [],
       menuTree: [],
       menuTypeEnum
     };
   },
+  watch: {
+    $route() {
+      // route变化则更新高亮菜单和展开的父级菜单
+      this.getSelectedAndOpeKeys();
+    },
+    collapsed(newValue) {
+      if (newValue) {
+        this.cacheOpenKeys = this.openKeys;
+        this.openKeys = [];
+      } else {
+        this.openKeys = this.cacheOpenKeys;
+      }
+    }
+  },
   methods: {
-    getDefault() {
+    getSelectedAndOpeKeys() {
       this.selectedKeys = [this.$route.path];
       const { matched } = this.$route;
       const index = matched.findIndex(i => i.path === this.$route.path);
@@ -58,9 +82,11 @@ export default {
       this.menuTree = data;
       const result = [];
       this.setPermissionKeys(data, result);
-      console.log(result);
-      console.log(this.$store);
       this.$store.commit('auth/updatePermissionCollection', { permissionCollection: result });
+    },
+    changeOpen(a) {
+      console.log(a);
+      this.openKeys = a;
     },
     setPermissionKeys(list, result) {
       list.map(i => {

@@ -1,11 +1,12 @@
 <template>
-  <a-tabs :activeKey="activeKey" type="editable-card" hide-add :tabBarStyle="{background: `#f0f2f5`}">
+  <a-tabs :activeKey="activeKey" type="editable-card" hide-add
+          :tabBarStyle="{background: `#f0f2f5`,margin:0}">
     <a-tooltip placement="left" :title="lockText" slot="tabBarExtraContent">
       <a-icon theme="filled" @click="onLockClick" class="header-lock" :type="fixedTabs ? 'lock' : 'unlock'" />
     </a-tooltip>
     <a-tab-pane v-for="page in editableTabs" :key="page.key">
       <div slot="tab" @click="onClickItem(page)" class="tab" @contextmenu="evt => onContextmenu(page,evt)">
-        <a-icon v-if="$route.fullPath == page.key" @click.stop="onRefresh(page)"
+        <a-icon v-if="$route.path == page.key" @click.stop="onRefresh(page)"
                 :class="['icon-sync', {'hide': page.key !== activeKey && !page.loading}]"
                 :type="page.loading ? 'loading' : 'sync'" />
         <div class="tabName">{{ page.title }}</div>
@@ -27,19 +28,19 @@ export default {
     }
   },
   created() {
-    const { fullPath } = this.$route;
-    this.changeActiveKey({ activeKey: fullPath });
+    const { path } = this.$route;
+    this.changeActiveKey({ activeKey: path });
   },
   watch: {
     $route(to) {
       if (to.path !== '/login') {
-        this.changeActiveKey({ activeKey: to.fullPath });
+        this.changeActiveKey({ activeKey: to.path });
         // store中不存在相同的key时才进行tab的添加
-        if (this.editableTabs.findIndex(i => i.key === to.fullPath) < 0)
+        if (this.editableTabs.findIndex(i => i.key === to.path) < 0)
           this.setEditableTabs({
             tabs: [{
               title: to.meta.title,
-              key: to.fullPath,
+              key: to.path,
               loading: false,
               closable: true
             }

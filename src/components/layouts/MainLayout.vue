@@ -1,41 +1,30 @@
 <template>
   <a-layout id="components-layout-demo-custom-trigger">
-    <a-layout-sider v-model="collapsed" :trigger="null"
-                    collapsible>
-      <div class="logo">
+    <!-- 侧边栏 -->
+    <a-layout-sider v-model="collapsed" :trigger="null" collapsible :width="256">
+      <!-- 公司Logo和名称 -->
+      <router-link to="/dashboard" class="logo-and-title">
         <img style="width: 32px" src="@/assets/biz-logo.png">
-        <router-link to="/dashboard">
-          <div class="system-name">珠海妇幼</div>
-        </router-link>
-      </div>
-      <MenuTree :menu-tree="menuData" />
+        <div class="system-name">珠海妇幼</div>
+      </router-link>
+      <!-- 菜单 -->
+      <MenuTree :collapsed="collapsed" />
     </a-layout-sider>
+
+    <!-- 头部及主题内容部分 -->
     <a-layout>
-      <a-layout-header
-        style="
-          background: #fff;
-          display: flex;
-          justify-content: space-between;
-          padding: 0 1rem;
-        "
-      >
+      <a-layout-header style="background: #fff;display: flex;justify-content: space-between;padding: 0 1rem;">
         <div style="display: inline-flex;align-items: center;">
-          <a-icon
-            class="trigger"
-            :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-            @click="() => (collapsed = !collapsed)"
-          />
+          <a-icon style="line-height: 0" class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+                  @click="() => (collapsed = !collapsed)" />
           <bread-crumb />
         </div>
         <div>
           <Header />
         </div>
       </a-layout-header>
-      <a-layout-content
-        :style="{
-          margin: '24px 24px 0',
-          background: '#fff',
-        }">
+      <a-layout-content :style="{margin: '24px 24px 0'}">
+        <!--        <a-layout-content :style="{margin: '24px 24px 0',background: '#fff',}">-->
         <TabsView />
       </a-layout-content>
       <a-layout-footer style="padding:0">
@@ -65,13 +54,11 @@ export default {
     return {
       collapsed: false,
       routes: routes[0].children,
-      breadcrumbPath: '',
-      menuData: []
+      breadcrumbPath: ''
     };
   },
   created() {
     this.correctContentHeight({ height: 160 });
-    this.getMenuTree();
   },
   computed: {
     menuWrapperWidth() {
@@ -79,15 +66,7 @@ export default {
     }
   },
   methods: {
-    ...mapMutations('setting', ['correctContentHeight']),
-    async getMenuTree() {
-      const jwtPayload = localStorage.getItem(__auth_token_key__).split('.')[1];
-      const parse = JSON.parse(atob(jwtPayload));
-      const userId = parse.userId;
-      // const { data } = await MenuService.getMenuTree();
-      const { data } = await RoleService.getUserMenus(userId)
-      this.menuData = data;
-    }
+    ...mapMutations('setting', ['correctContentHeight'])
   }
 };
 
@@ -111,10 +90,10 @@ export default {
   color: #1890ff;
 }
 
-#components-layout-demo-custom-trigger .logo {
+#components-layout-demo-custom-trigger .logo-and-title {
   height: 6.4rem;
   padding-left: 2.4rem;
-  background: #053434;
+  //background: #053434;
   color: white;
   display: flex;
   align-items: center;

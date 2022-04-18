@@ -2,7 +2,6 @@
   <div>
     <content-menu :item-list="list" :visible.sync="menuVisible" @select="onMenuSelect" />
     <TabsHeader @refresh="refresh" @clickPage="recoverPage" @contextmenu="onContextmenu" @closePage="closePage" />
-    <aside></aside>
     <main :style="{height: `calc(100vh - ${contentHeight}px)`,overflow:`auto`}">
       <!--            <a-keep-alive :exclude-keys="excludeKeys">-->
       <!--      <transition name="slide-left" style="border: 1px solid red">-->
@@ -40,7 +39,7 @@ export default {
   },
   watch: {
     $route(to, from) {
-      if (to.fullPath !== from.fullPath) {
+      if (to.path !== from.path) {
         if (this.currentPage) {
           this.currentPage.loading = false;
           this.currentPage = null;
@@ -61,7 +60,7 @@ export default {
     },
     closePage({ key, title, closable }) {
       const index = this.editableTabs.findIndex(i => i.key === key);
-      const currentIndex = this.editableTabs.findIndex(i => this.$route.fullPath === i.key);
+      const currentIndex = this.editableTabs.findIndex(i => this.$route.path === i.key);
       this.removeTab({ index });
       const closeTargetIsLast = this.editableTabs.length - 1 === index;
       if (index === currentIndex) {
@@ -70,7 +69,7 @@ export default {
       } else {
 
       }
-      console.log(this.$route.fullPath);
+      console.log(this.$route.path);
       console.log(index);
       console.log(currentIndex);
       return;

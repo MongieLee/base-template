@@ -39,7 +39,7 @@ export default {
   async created() {
     await this.getMenuTree();
     await this.getMenuByRoleId();
-
+    console.log(this.$route);
   },
   computed: {
     ...mapState('setting', ['contentHeight'])
@@ -72,7 +72,6 @@ export default {
      * 2. 如果当前遍历菜单在回显的菜单id数组中，并且有子级则进行清洗处理
      *    - 如果当前遍历菜单有子级并且子级id并不是全部都在回显的菜单id数组中，需要从回显id数组中剔除
      *    - 如果有一项子级，且子级的id在回显id数组中，子级也存在子级。则需要从回显id数组中剔除
-     * 2.
      * @param source
      * @param treeIds
      */

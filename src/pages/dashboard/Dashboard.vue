@@ -310,6 +310,6 @@ export default {
 </style>
 <style lang="less">
 .test {
-  // background: argb(rgba(231, 38, 157, 0.3));
+   background: argb(rgba(231, 38, 157, 0.3));
 }
 </style>

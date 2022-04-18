@@ -3,70 +3,79 @@ import VueRouter from 'vue-router';
 import { inspectTokenValidity } from 'utils/token';
 import { formatRoutes } from '@/router/helps/handlerRoutes';
 import NProgress from 'nprogress';
+import BaseLayout from '@/components/layouts/MainLayout.vue';
+import EmptyView from 'components/EmptyView';
 
-NProgress.configure({ showSpinner: false });
 Vue.use(VueRouter);
+
+// 隐藏顶部进度条的loading
+NProgress.configure({ showSpinner: false });
+
 
 const routes = [
   {
     path: '/',
+    name: 'index',
+    component: BaseLayout,
     redirect: '/dashboard',
-    component: () => import(/* webpackChunkName:"mainLayout" */ 'components/layouts/MainLayout.vue'),
+    meta: { title: '首页' },
     children: [
       {
-        path: 'dashboard',
-        name: 'About',
-        component: () => import(/* webpackChunkName:"about"*/ 'pages/About.vue')
+        path: '/dashboard',
+        name: 'dashboard',
+        component: () => import(/* webpackChunkName:"dashboard"*/ 'pages/About.vue'),
+        meta: { title: '仪表盘', icon: 'bug', keepAlive: true, permission: ['dashboard'] }
       },
       {
-        path: 'system',
-        meta: { title: '系統管理' },
+        path: '/system',
+        name: 'system',
+        component: EmptyView,
         redirect: '/system/menu',
-        component: () => import(/* webpackChunkName:"emptyView" */ 'components/EmptyView'),
+        meta: { title: '系統管理', icon: 'bug', keepAlive: true, permission: ['system'] },
         children: [
           {
-            path: 'menu',
-            name: 'Menu',
-            meta: { title: '菜單管理' },
-            component: () => import(/* webpackChunkName:"menu" */ 'pages/menu/Index.vue')
+            path: '/system/menu',
+            name: 'menu',
+            component: () => import(/* webpackChunkName:"systemMenu" */ 'pages/menu/Index.vue'),
+            meta: { title: '菜单管理', icon: 'bug', permission: ['system', 'menu'] }
           },
           {
             path: 'resource',
             name: 'resource',
-            meta: { title: '資源管理' },
+            meta: { title: '资源管理' },
             component: () => import(/* webpackChunkName:"resource" */ 'pages/system/resource/Index.vue')
           },
           {
             path: 'resourceCategroy',
             name: 'resourceCategroy',
-            meta: { title: '資源分类' },
+            meta: { title: '资源分类' },
             component: () => import(/* webpackChunkName:"resource-categroy" */ 'pages/system/resourceCategroy/Index.vue')
           },
           {
-            path: 'role',
+            path: '/system/role',
             name: 'role',
-            meta: { title: '角色管理' },
-            component: () => import(/* webpackChunkName:"resource" */ 'pages/system/role/Index.vue')
+            component: () => import(/* webpackChunkName:"role" */ 'pages/system/role/Index.vue'),
+            meta: { title: '角色管理', keepAlive: true, icon: 'bug', permission: ['system', 'role'] }
           },
           {
             path: 'allotMenu/:roleId',
             name: 'allotMenu',
-            meta: { title: '分配菜單' },
+            meta: { title: '分配菜单' },
             props: true,
             component: () => import(/* webpackChunkName:"allotMenu" */ 'pages/system/role/components/AllotMenu.vue')
           },
           {
             path: 'allotResource/:roleId',
             name: 'allotResource',
-            meta: { title: '分配資源' },
+            meta: { title: '分配资源' },
             props: true,
             component: () => import(/* webpackChunkName:"allot-resource" */ 'pages/system/role/components/AllotResource.vue')
           },
           {
-            path: 'user',
+            path: '/system/user',
             name: 'user',
-            meta: { title: '用戶管理' },
-            component: () => import(/* webpackChunkName:"resource" */ 'pages/system/user/Index.vue')
+            meta: { title: '用户管理', keepAlive: true, icon: 'bug', permission: ['system', 'user'] },
+            component: () => import(/* webpackChunkName:"user" */ 'pages/system/user/Index.vue')
           }
         ]
       }
@@ -92,7 +101,6 @@ const router = new VueRouter({
   routes
 });
 const startNprogress = () => {
-  console.log(NProgress.isStarted);
   if (!NProgress.isStarted()) {
     NProgress.start();
     NProgress.inc();
