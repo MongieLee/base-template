@@ -39,6 +39,12 @@ module.exports = {
       }
     }
   },
+  pluginOptions: {
+    'style-resources-loader': {
+      preProcessor: 'less',
+      patterns: [resolvePath('./src/theme/common.less')]
+    }
+  },
   chainWebpack: (config) => {
     config.resolve.alias
       .set('@', resolvePath('./src'))
@@ -47,6 +53,7 @@ module.exports = {
       .set('pages', resolvePath('./src/pages'))
       .set('assets', resolvePath('./src/assets'))
       .set('configs', resolvePath('./src/configs'))
+      .set('theme', resolvePath('./src/theme'))
       .set('services', resolvePath('./src/services'));
   }
 };

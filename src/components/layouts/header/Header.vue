@@ -8,7 +8,7 @@
       <div class="header-avatar">
         <span>{{ user && user.username }}</span>
         <a-avatar class="avatar" size="large" shape="circle" icon="user"
-                  :src="user.avatar" />
+                  :src="user.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'" />
       </div>
       <a-menu class="avatar-menu" slot="overlay">
         <a-menu-item @click="logout">

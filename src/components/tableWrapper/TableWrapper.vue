@@ -31,7 +31,7 @@
       :columns="columns"
       size="small"
       :rowKey="rowKey"
-      :pagination="pagination ? { ...defaultPagination, ...pagination } :pagination"
+      :pagination="typeof pagination === false ? pagination :{ ...defaultPagination, ...pagination }"
       :scroll="{ y: tableHeight, ...scroll }"
       :loading="loading"
       @change="paginationChange"
@@ -61,7 +61,6 @@ export default {
       tableHeight: 0
     };
   },
-
   mounted() {
     setTimeout(() => {
       this.getListHeight(this.getParentEleHeight());
@@ -73,12 +72,10 @@ export default {
     paginationChange(pagination, filters, sorter, { currentDataSource }) {
       this.$emit('change', pagination, filters, sorter, { currentDataSource });
     },
-
     // resize回调函数
     watchWindowResize() {
       this.getListHeight(this.getParentEleHeight());
     },
-
     // 获取父元素高度
     getParentEleHeight() {
       const layoutStyle = Object.keys(this.layoutStyle);
@@ -92,7 +89,6 @@ export default {
       }
       return parentEleHeight;
     },
-
     // 获取表格高度
     getListHeight(parentEleHeight) {
       const dom = this.$refs.layoutRef.querySelector('.ant-table');
@@ -101,7 +97,6 @@ export default {
       dValue += headerStyles.marginTop.replace('px', '') - 0;
       dValue += headerStyles.marginBottom.replace('px', '') - 0;
       dValue += headerStyles.height.replace('px', '') - 0;
-
       dom.style.minHeight = parentEleHeight - dValue - 56.5 + 'px'; // 强行拉高表格
       dom.style.borderRight = `1px solid #e8e8e8`; // 处理表格👉边框缺失
       setTimeout(() => {
@@ -109,11 +104,9 @@ export default {
           .querySelector('.ant-table-body')
           .classList.add('tbody-bottom-border');
       });
-
       this.tableHeight = parentEleHeight - dValue - 39 - 56.5; // 39是表头，56.5是分页高度
       // dValue是header插槽的高度，39为表头高度，56.5为分页组件高度
     },
-
     // 获取元素的内容区域高度
     getContentHeight(ele) {
       const node = window.getComputedStyle(ele);
@@ -122,7 +115,6 @@ export default {
       return ele.clientHeight - elePaddingLeft - elePaddingRight;
     }
   },
-
   props: {
     // y、x轴滚动设置
     scroll: {
@@ -131,43 +123,36 @@ export default {
         return {};
       }
     },
-
     // 加载状态
     loading: {
       type: Boolean,
       default: false
     },
-
     // 数据源
     dataSource: {
       type: Array,
       default: () => []
     },
-
     // 列配置
     columns: {
       type: Array,
       default: () => []
     },
-
     // 容器内联样式
     layoutStyle: {
       type: Object,
       default: () => ({})
     },
-
     // 头部容器内联样式
     headerStyle: {
       type: Object,
       default: () => ({})
     },
-
     // 唯一key
     rowKey: {
       type: String,
       default: () => 'id'
     },
-
     // 分页配置
     pagination: {
       type: [Object, Boolean],
@@ -178,23 +163,19 @@ export default {
           `当前${range[0]}-${range[1]}条，共 ${total} 条`
       })
     },
-
     // 表格行样式名
     rowClassName: {
       type: Function
     },
-
     // 表格行设置
     customRow: {
       type: Function
     },
-
     // 工具栏是否隐藏显示
     toolbarVisible: {
       type: Boolean,
       default: () => false
     },
-
     // 导出按钮回调
     exportCallback: {
       type: Function
@@ -208,7 +189,6 @@ export default {
       type: String
     }
   },
-
   destroyed() {
     window.removeEventListener('resize', this.watchWindowResize);
   }
@@ -216,9 +196,10 @@ export default {
 </script>
 
 <style lang="less" scoped>
+
 .a-container {
   overflow: hidden;
-  background: #fff;
+  background: @global-content-bg-color;
 
   .layout-header {
     overflow: hidden;

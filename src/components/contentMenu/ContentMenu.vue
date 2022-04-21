@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: "ContentMenu",
+  name: 'ContentMenu',
   props: {
     visible: {
       type: Boolean,
@@ -24,7 +24,8 @@ export default {
     return {
       top: 0,
       left: 0,
-      target: null
+      target: null,
+      cacheKey: null
     };
   },
   computed: {
@@ -35,33 +36,38 @@ export default {
       };
     }
   },
+  // 添加事件监听
   created() {
-    window.addEventListener("click", this.closeMenu);
-    window.addEventListener("contextmenu", this.setPosition);
+    window.addEventListener('click', this.closeMenu);
+    window.addEventListener('contextmenu', this.setPosition);
   },
+  // 移除事件监听
   beforeDestroy() {
-    window.removeEventListener("click", this.closeMenu);
-    window.removeEventListener("contextmenu", this.setPosition);
+    window.removeEventListener('click', this.closeMenu);
+    window.removeEventListener('contextmenu', this.setPosition);
   },
   methods: {
     // 隐藏菜单
     closeMenu() {
       // 外部使用visible.sync来同步
-      this.$emit("update:visible", false);
+      this.$emit('update:visible', false);
+      this.cacheKey = null;
     },
     // 处理菜单的点击事件，组件会传入带点击菜单的key对象为参数{key:"xxx",...rest}
     handleClick({ key }) {
       // 触发select事件，让外部的使用者能够监听点击菜单
       // 传入key以及被右键的菜单
-      this.$emit("select", key, this.target);
+      this.$emit('select',key,this.cacheKey);
       this.closeMenu();
     },
     // 菜单右键事件
     setPosition(e) {
+      console.log(e);
       // 获取并设置鼠标的x坐标和y坐标和被右键的dom
       this.top = e.clientY;
       this.left = e.clientX;
       this.traget = e.target;
+      this.cacheKey = e._pagekey;
     }
   }
 };

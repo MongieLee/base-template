@@ -1,5 +1,5 @@
 <template>
-  <div class="container" :style="`height: calc(100vh - ${contentHeight}px)`">
+  <div class="fuck">
     <table-wrapper @change="tableChange" :data-source="menuTree" :columns="columns" :pagination="pagination"
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
@@ -256,8 +256,8 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.container {
-  padding: 12px;
+.fuck{
+  height: 100%;
+  position: absolute;
 }
-
 </style>

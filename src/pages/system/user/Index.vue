@@ -1,16 +1,15 @@
 <template>
-  <div class="container" :style="`height: calc(100vh - ${contentHeight}px)`">
+  <div class="container2">
     <table-wrapper @change="tableChange" :data-source="listData" :columns="columns" :pagination="pagination"
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
-          <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加
-          </a-button>
+          <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加</a-button>
         </div>
       </template>
       <template slot="avatar" slot-scope="{data}">
         <a-avatar
-          :src="data || 'https://img1.baidu.com/it/u=4054175603,836973543&fm=253&fmt=auto&app=138&f=JPEG?w=750&h=422'"></a-avatar>
+          :src="data || 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'"></a-avatar>
       </template>
       <template slot="status" slot-scope="{data}">
         <a-tag :color="data?`green`:`red`">{{ data ? '正常' : '封号' }}</a-tag>
@@ -243,9 +242,12 @@ export default {
 };
 </script>
 
-<style lang="less">
-.container {
-  padding: 12px;
+<style lang="less" scoped>
+.container2 {
+  height: 100%;
+  position: absolute;
+  background-color: #fff;
+  padding: 1.2rem;
 }
 
 .avatar-uploader {

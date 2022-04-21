@@ -18,7 +18,9 @@ const columns = [
     scopedSlots: {
       customRender: 'avatar'
     },
-    dataIndex: 'avatar'
+    dataIndex: 'avatar',
+    width: 50,
+    align: 'center'
   },
   {
     title: '角色身份',
@@ -39,6 +41,7 @@ const columns = [
   {
     title: '创建时间',
     customRender(data) {
+      // 时区转换存在8小时误差
       return moment(data).add(8, 'hour').format('YYYY-MM-DD HH:mm');
     },
     dataIndex: 'createdAt'

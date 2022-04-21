@@ -1,11 +1,11 @@
 <template>
   <a-layout id="components-layout-demo-custom-trigger">
     <!-- 侧边栏 -->
-    <a-layout-sider v-model="collapsed" :trigger="null" collapsible :width="256">
+    <a-layout-sider style="box-shadow: 2px 0 3px 2px rgba(0,0,0,0.25);" v-model="collapsed" :trigger="null" :collapsible="true" :width="256">
       <!-- 公司Logo和名称 -->
       <router-link to="/dashboard" class="logo-and-title">
-        <img style="width: 32px" src="@/assets/biz-logo.png">
-        <div class="system-name">珠海妇幼</div>
+        <img style="width: 32px" src="@/assets/biz-logo.png" alt="company">
+        <div class="system-name">珠海百智科技</div>
       </router-link>
       <!-- 菜单 -->
       <MenuTree :collapsed="collapsed" />
@@ -13,7 +13,8 @@
 
     <!-- 头部及主题内容部分 -->
     <a-layout>
-      <a-layout-header style="background: #fff;display: flex;justify-content: space-between;padding: 0 1rem;">
+      <a-layout-header
+        style="box-shadow: 0 2px 8px rgba(0,0,0,0.25); background: #fff;display: flex;justify-content: space-between;padding: 0 1rem;">
         <div style="display: inline-flex;align-items: center;">
           <a-icon style="line-height: 0" class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
                   @click="() => (collapsed = !collapsed)" />
@@ -23,13 +24,10 @@
           <Header />
         </div>
       </a-layout-header>
-      <a-layout-content :style="{margin: '24px 24px 0'}">
-        <!--        <a-layout-content :style="{margin: '24px 24px 0',background: '#fff',}">-->
+      <a-layout-content :style="{margin: '10px 24px 0'}">
         <TabsView />
-      </a-layout-content>
-      <a-layout-footer style="padding:0">
         <Footer />
-      </a-layout-footer>
+      </a-layout-content>
     </a-layout>
   </a-layout>
 </template>
@@ -42,10 +40,7 @@ import MenuTree from 'components/menu/MenuTree';
 import TabsView from 'components/layouts/tab/TabsView';
 import { mapMutations } from 'vuex';
 import { routes } from '@/router';
-import MenuService from 'services/menu';
 import BreadCrumb from 'components/breadcrumb/BreadCrumb';
-import { __auth_token_key__ } from 'utils/token';
-import RoleService from 'services/system/role';
 
 export default {
   name: 'HomePage',
@@ -58,18 +53,12 @@ export default {
     };
   },
   created() {
-    this.correctContentHeight({ height: 160 });
-  },
-  computed: {
-    menuWrapperWidth() {
-      return `${this.collapsed ? 80 : 256}px`;
-    }
+    this.correctContentHeight({ height: 144 });
   },
   methods: {
     ...mapMutations('setting', ['correctContentHeight'])
   }
 };
-
 </script>
 <style lang="less">
 #components-layout-demo-custom-trigger {

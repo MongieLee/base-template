@@ -1,14 +1,15 @@
 <template>
-  <div class="container2" :style="`height: calc(100vh - ${contentHeight}px)`">
-    <a-row style="margin-bottom: 2.4rem;background: white;  padding: 1.2rem;">
+  <div class="container2">
+    <a-row style="margin-bottom: 2.4rem;background: white;  padding: 1.2rem;display: flex;align-items:center;">
       <a-col :sm="24" :md="12" :xl="12">
         <div style="display: flex">
           <div class="avatar">
-            <a-avatar :size="80" icon="user" :src="user.avatar" />
+            <a-avatar :size="80" icon="user"
+                      :src="user.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'" />
           </div>
           <div
             style="margin-left: 2rem;display: flex;flex-direction:column;justify-content:space-between;padding: 8px 0;">
-            <div class="content-title">
+            <div class="content-title animate__animated animate__bounce">
               {{ timeFix }}，{{ user.username }}
             </div>
             <div>前端工程师 | 百智科技 - 研发部</div>
@@ -18,10 +19,10 @@
       <a-col :sm="24" :md="12" :xl="12">
         <div style="display: flex;justify-content: space-around;align-items: center;">
           <div class="stat-item">
-            <a-statistic title="项目数" :value="56" />
+            <a-statistic title="项目数" :value="6" />
           </div>
           <div class="stat-item">
-            <a-statistic title="团队内排名" :value="8" suffix="/ 24" />
+            <a-statistic title="未修复BUG" :value="8" />
           </div>
           <div class="stat-item">
             <a-statistic title="项目访问" :value="2223" />
@@ -29,8 +30,9 @@
         </div>
       </a-col>
     </a-row>
-    <a-row style="margin-bottom: 2.4rem;background: white;  padding: 1.2rem;">
-      <a-card title="参与项目" style="margin-left: 0;">
+    <a-row style="margin-bottom: 2.4rem;background: white;">
+      <a-card :loading="loading" title="参与项目" style="margin-left: 0;">
+        <a slot="extra">全部项目</a>
         <a-card-grid style="width:25%;text-align:center">
           珠海A项目
         </a-card-grid>
@@ -57,17 +59,17 @@
         </a-card-grid>
       </a-card>
     </a-row>
-    <a-row style="margin-bottom: 2.4rem;background: white;  padding: 1.2rem;">
-      <a-card style="margin-top: 2.4rem" :loading="loading" title="动态" :bordered="false">
+    <a-row style="margin-bottom: 2.4rem; background: white;">
+      <a-card :loading="loading" title="动态" :bordered="false">
         <a-list>
-          <a-list-item :key="index" v-for="(item, index) in []">
+          <a-list-item :key="index" v-for="(item, index) in dynamicList">
             <a-list-item-meta>
               <a-avatar slot="avatar" size="small" :src="item.user.avatar" />
               <div slot="title">
-                    <span>{{ item.user.nickname }}</span
-                    >&nbsp; 在&nbsp;<a href="#">{{ item.project.name }}</a
-              >&nbsp; <span>{{ item.project.action }}</span
-              >&nbsp;
+                <span>{{ item.user.nickname }}</span>
+                <span style="margin: 0 1rem">在</span>
+                <a href="#">{{ item.project.name }}</a>
+                <span style="margin: 0 1rem">{{ item.project.action }}</span>
                 <a href="#">{{ item.project.event }}</a>
               </div>
               <div slot="description">{{ item.time }}</div>
@@ -76,6 +78,7 @@
         </a-list>
       </a-card>
     </a-row>
+    <div style="height: 50vh"></div>
   </div>
 </template>
 
@@ -89,8 +92,21 @@ export default {
     return {
       loading: true,
       welcome: '',
-      timeFix: timeFix()
+      timeFix: timeFix(),
+      dynamicList: [{
+        user: {
+          nickname: '前端开发',
+          avatar: 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'
+        },
+        project: { name: '珠海A项目', action: '添加', event: '项目' },
+        time: '2019-01-01 12:00:00'
+      }]
     };
+  },
+  created() {
+    setTimeout(() => {
+      this.loading = false;
+    }, 1000);
   },
   computed: {
     ...mapState('auth', ['user']),

@@ -11,7 +11,6 @@ Vue.use(VueRouter);
 // 隐藏顶部进度条的loading
 NProgress.configure({ showSpinner: false });
 
-
 const routes = [
   {
     path: '/',
@@ -23,15 +22,15 @@ const routes = [
       {
         path: '/dashboard',
         name: 'dashboard',
-        component: () => import(/* webpackChunkName:"dashboard"*/ 'pages/About.vue'),
+        component: () => import(/* webpackChunkName:"dashboard"*/ 'pages/Dashboard.vue'),
         meta: { title: '仪表盘', icon: 'bug', keepAlive: true, permission: ['dashboard'] }
       },
       {
         path: '/system',
         name: 'system',
-        component: EmptyView,
+        component: () => import('components/EmptyView.vue'),
         redirect: '/system/menu',
-        meta: { title: '系統管理', icon: 'bug', keepAlive: true, permission: ['system'] },
+        meta: { title: '系统管理', icon: 'bug', keepAlive: true, permission: ['system'] },
         children: [
           {
             path: '/system/menu',
@@ -40,13 +39,13 @@ const routes = [
             meta: { title: '菜单管理', icon: 'bug', permission: ['system', 'menu'] }
           },
           {
-            path: 'resource',
+            path: '/system/resource',
             name: 'resource',
             meta: { title: '资源管理' },
             component: () => import(/* webpackChunkName:"resource" */ 'pages/system/resource/Index.vue')
           },
           {
-            path: 'resourceCategroy',
+            path: '/system/resourceCategroy',
             name: 'resourceCategroy',
             meta: { title: '资源分类' },
             component: () => import(/* webpackChunkName:"resource-categroy" */ 'pages/system/resourceCategroy/Index.vue')
@@ -58,14 +57,14 @@ const routes = [
             meta: { title: '角色管理', keepAlive: true, icon: 'bug', permission: ['system', 'role'] }
           },
           {
-            path: 'allotMenu/:roleId',
+            path: '/system/allotMenu/:roleId',
             name: 'allotMenu',
             meta: { title: '分配菜单' },
             props: true,
             component: () => import(/* webpackChunkName:"allotMenu" */ 'pages/system/role/components/AllotMenu.vue')
           },
           {
-            path: 'allotResource/:roleId',
+            path: '/system/allotResource/:roleId',
             name: 'allotResource',
             meta: { title: '分配资源' },
             props: true,
@@ -100,6 +99,7 @@ const routes = [
 const router = new VueRouter({
   routes
 });
+
 const startNprogress = () => {
   if (!NProgress.isStarted()) {
     NProgress.start();
@@ -112,6 +112,11 @@ const nprogressEnd = () => {
 };
 router.beforeEach((to, from, next) => {
   startNprogress();
+  if (to.meta.title) {
+    document.title = to.meta.title;
+  } else {
+    document.title = '管理系统';
+  }
   if (inspectTokenValidity()) {
     next();
   } else {

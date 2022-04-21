@@ -5,7 +5,10 @@ const storageAuthKey = '__user_info__';
 const cache_tabs_key = 'cache_tabs';
 export const defaultActiveKey = '/dashboard';
 
-
+/**
+ * 缓存tabs信息
+ * @param tabs
+ */
 const cacheTabs = (tabs) => {
   localStorage.setItem(cache_tabs_key, JSON.stringify(tabs));
 };
@@ -36,7 +39,7 @@ console.log(getInitTabs());
 export default {
   namespaced: true,
   state: {
-    user: JSON.parse(getToken(storageAuthKey) || 'null'), // 用户信息
+    user: JSON.parse(getToken(storageAuthKey) || '{}'), // 用户信息
     permissionCollection: [], // 用户角色权限集合
     activeKey: defaultActiveKey, // 默认高亮tab
     editableTabs: getInitTabs(), // tabs栏菜单
@@ -64,6 +67,12 @@ export default {
       // TODO 高亮异常，需要处理
       // state.activeKey = state.editableTabs[index - 1].key;
       state.editableTabs.splice(index, 1);
+      cacheTabs(state.editableTabs);
+    },
+    batchRemoveTabs(state, { begin,count }) {
+      // TODO 高亮异常，需要处理
+      // state.activeKey = state.editableTabs[index - 1].key;
+      state.editableTabs.splice(begin,count);
       cacheTabs(state.editableTabs);
     }
   },

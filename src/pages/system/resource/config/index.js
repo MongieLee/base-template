@@ -45,3 +45,4 @@ const rules = {
 };
 
 export { columns, rules };
+

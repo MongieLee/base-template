@@ -201,6 +201,6 @@ export default {
 
 <style lang="less" scoped>
 .container {
-  padding: 0 12px 12px;
+  //padding: 0 12px 12px;
 }
 </style>

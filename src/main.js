@@ -8,6 +8,7 @@ import './theme/index.less';
 import 'nprogress/nprogress.css';
 import { formatAuthority } from '@/router/helps/handlerRoutes';
 import options from '@/router/async/config';
+import 'animate.css'
 import "./directives/inspectPermission"
 
 // import 'quill/dist/quill.core.css' // import styles

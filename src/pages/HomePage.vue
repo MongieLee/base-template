@@ -1,7 +1,7 @@
 <template>
   <a-layout id="components-layout-demo-custom-trigger">
-    <a-layout-sider v-model="collapsed" :trigger="null" collapsible>
-      <div class="logo">珠海妇幼</div>
+    <a-layout-sider v-model="collapsed" :trigger="null" :collapsible="true">
+      <div class="logo">珠海百智科技</div>
       <a-menu theme="dark" mode="inline" :default-selected-keys="['1']">
         <a-menu-item @click="to(menu)" v-for="menu in routes" :key="menu.path">
           <a-icon type="user" />
@@ -10,31 +10,12 @@
       </a-menu>
     </a-layout-sider>
     <a-layout>
-      <a-layout-header
-        style="
-          background: #fff;
-          display: flex;
-          justify-content: space-between;
-          padding: 0 0 0 1rem;
-        "
-      >
-        <a-icon
-          class="trigger"
-          :type="collapsed ? 'menu-unfold' : 'menu-fold'"
-          @click="() => (collapsed = !collapsed)"
-        />
-        <div>
-          <Header />
-        </div>
+      <a-layout-header class="red" style="background: #fff;display: flex;justify-content: space-between;padding: 0 0 0 1rem;">
+        <a-icon class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
+                @click="() => (collapsed = !collapsed)" />
+        <Header />
       </a-layout-header>
-      <a-layout-content
-        :style="{
-          margin: '24px 16px',
-          padding: '24px',
-          background: '#fff',
-          minHeight: '280px',
-        }"
-      >
+      <a-layout-content :style="{margin: '24px 16px',padding: '24px',background: '#fff',minHeight: '280px',}">
         <router-view />
       </a-layout-content>
     </a-layout>
@@ -56,7 +37,8 @@ export default {
     };
   },
   created() {
-    this.correctContentHeight({ height: 160 });
+    // 158为非内容区所占高度
+    this.correctContentHeight({ height: 158 });
   },
   methods: {
     ...mapMutations('setting', ['correctContentHeight']),
@@ -89,5 +71,8 @@ export default {
   height: 32px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
+}
+.red{
+  border:1px solid red;
 }
 </style>

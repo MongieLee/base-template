@@ -12,12 +12,11 @@
 </template>
 
 <script>
-import animateConfig from "./animationConfig";
-
+import animateConfig from './animationConfig';
 const { preset } = animateConfig;
 
 export default {
-  name: "PageToggleTransition",
+  name: 'PageToggleTransition',
   props: {
     // 默认
     disabled: {
@@ -28,15 +27,15 @@ export default {
     animate: {
       type: String,
       validator(value) {
-        return preset.findIndex(item => item.name == value) != -1;
+        return preset.findIndex(item => item.name === value) !== -1;
       },
-      default: "bounce"
+      default: 'bounce'
     },
     direction: {
       type: String,
       validator(value) {
-        return ["x", "y", "left", "right", "up", "down", "downLeft", "upRight", "downRight", "upLeft", "downBig",
-          "upBig", "downLeft", "downRight", "topRight", "bottomLeft", "topLeft", "bottomRight", "default"].indexOf(value) > -1;
+        return ['x', 'y', 'left', 'right', 'up', 'down', 'downLeft', 'upRight', 'downRight', 'upLeft', 'downBig',
+          'upBig', 'downLeft', 'downRight', 'topRight', 'bottomLeft', 'topLeft', 'bottomRight', 'default'].indexOf(value) > -1;
       }
     },
     reverse: {
@@ -56,24 +55,24 @@ export default {
     activeClass(isLeave) {
       let animate = animates.find(item => this.animate == item.name);
       if (animate == undefined) {
-        return "";
+        return '';
       }
-      let direction = "";
+      let direction = '';
       if (this.direction == undefined) {
         direction = animate.directions[0];
       } else {
         direction = animate.directions.find(item => item == this.direction);
       }
-      direction = (direction == undefined || direction === "default") ? "" : direction;
-      if (direction != "") {
+      direction = (direction == undefined || direction === 'default') ? '' : direction;
+      if (direction != '') {
         direction = isLeave && this.reverse ? this.reversePosition(direction, animate.directions) : direction;
         direction = direction[0].toUpperCase() + direction.substring(1);
       }
-      let t = isLeave ? "Out" : "In";
+      let t = isLeave ? 'Out' : 'In';
       return animate.name + t + direction;
     },
     reversePosition(direction, directions) {
-      if (direction.length == 0 || direction == "x" || direction == "y") {
+      if (direction.length == 0 || direction == 'x' || direction == 'y') {
         return direction;
       }
       let index = directions.indexOf(direction);
