@@ -37,15 +37,13 @@ export default {
         this.changeActiveKey({ activeKey: to.path });
         // store中不存在相同的key时才进行tab的添加
         if (this.editableTabs.findIndex(i => i.key === to.path) < 0)
-          this.setEditableTabs({
-            tabs: [{
+          this.setEditableTabs(
+            [{
               title: to.meta.title,
               key: to.path,
               loading: false,
               closable: true
-            }
-            ]
-          });
+            }]);
       }
     }
   },

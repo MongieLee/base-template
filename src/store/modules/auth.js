@@ -27,8 +27,6 @@ const getInitTabs = () => {
   }];
   try {
     // 防止tabs字符串反序列化报错
-    console.log((tabs));
-    console.log(JSON.parse(tabs));
     return tabs ? JSON.parse(tabs) : defaultTabs;
   } catch {
     return defaultTabs;
@@ -39,6 +37,10 @@ console.log(getInitTabs());
 export default {
   namespaced: true,
   state: {
+    tokenInfo: {
+      token: undefined,
+      refreshToken: undefined
+    },
     user: JSON.parse(getToken(storageAuthKey) || '{}'), // 用户信息
     permissionCollection: [], // 用户角色权限集合
     activeKey: defaultActiveKey, // 默认高亮tab
@@ -46,6 +48,9 @@ export default {
     isResolveRoute: false // 是否解析过路由
   },
   mutations: {
+    setTokenInfo(state, tokenInfo) {
+      state.tokenInfo = tokenInfo;
+    },
     updateUser(state, { user }) {
       state.user = user;
     },
@@ -69,10 +74,10 @@ export default {
       state.editableTabs.splice(index, 1);
       cacheTabs(state.editableTabs);
     },
-    batchRemoveTabs(state, { begin,count }) {
+    batchRemoveTabs(state, { begin, count }) {
       // TODO 高亮异常，需要处理
       // state.activeKey = state.editableTabs[index - 1].key;
-      state.editableTabs.splice(begin,count);
+      state.editableTabs.splice(begin, count);
       cacheTabs(state.editableTabs);
     }
   },

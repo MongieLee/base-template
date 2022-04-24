@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       loginLoading: false,
-      topic: "珠海市妇幼内容管理平台",
+      topic: "中后台基础系统模板",
       userForm: {
         username: undefined,
         password: undefined
@@ -59,8 +59,8 @@ export default {
           try {
             this.loginLoading = true;
             // const { data: { token, expires } = await AuthService.login(this.userForm);
-            const { data: { token, expires } } = await AuthService.login(this.userForm);
-            setAuthToken(token, expires);
+            const { data: { token, expires,refresh_token } } = await AuthService.login(this.userForm);
+            setAuthToken(token, expires,refresh_token);
             this.$router.push("/")
           } finally {
             this.loginLoading = false;
