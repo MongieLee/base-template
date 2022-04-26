@@ -13,7 +13,7 @@
         <a-button :loading="loginLoading" type="primary" style="width: 100%" @click="login">
           登录
         </a-button>
-                <a-button type="primary" style="width: 100%" @click="register">注册</a-button>
+        <a-button type="primary" style="width: 100%" @click="register">注册</a-button>
         <a-divider />
       </a-form-model>
     </a-card>
@@ -23,13 +23,14 @@
 <script>
 import AuthService from 'services/auth';
 import { setAuthToken, inspectTokenValidity } from 'utils/token';
+import { mapMutations } from 'vuex';
 
 export default {
-  name: "Login",
+  name: 'Login',
   data() {
     return {
       loginLoading: false,
-      topic: "中后台基础系统模板",
+      topic: '中后台基础系统模板',
       userForm: {
         username: undefined,
         password: undefined
@@ -43,6 +44,7 @@ export default {
     };
   },
   methods: {
+    ...mapMutations('auth', ['setTokenInfo']),
     register() {
       this.$refs.ruleForm.validate((valid) => {
         if (valid) {
@@ -59,9 +61,10 @@ export default {
           try {
             this.loginLoading = true;
             // const { data: { token, expires } = await AuthService.login(this.userForm);
-            const { data: { token, expires,refresh_token } } = await AuthService.login(this.userForm);
-            setAuthToken(token, expires,refresh_token);
-            this.$router.push("/")
+            const { token, expires, refresh_token } = await AuthService.login(this.userForm);
+            this.setTokenInfo({ token, refresh_token });
+            setAuthToken(token, expires, refresh_token);
+            this.$router.push('/');
           } finally {
             this.loginLoading = false;
           }

@@ -151,9 +151,8 @@ export default {
     },
     getMenuTree() {
       this.tableLoading = true;
-      MenuService.getMenuTree().then(res => {
-        console.log(res);
-        this.menuTree = this.handlerTreeChild(res.data);
+      MenuService.getMenuTree().then(data => {
+        this.menuTree = this.handlerTreeChild(data);
       }).finally(() => {
         this.tableLoading = false;
       });

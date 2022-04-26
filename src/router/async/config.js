@@ -12,9 +12,6 @@ const asyncRoutes = [
   }
 ];
 
-console.log(`parseRoutes(asyncRoutes)`);
-console.log(parseRoutes(asyncRoutes));
-
 const options = {
   routes: parseRoutes(asyncRoutes)
 };

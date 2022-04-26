@@ -14,7 +14,8 @@
           </div>
           <div class="action-item">
             <div>资源分类：</div>
-            <a-select  style="width: 200px"  allowClear v-model="searchForm.categroyId" placeholder="可选择所属分类" :options="menuTree" />
+            <a-select style="width: 200px" allowClear v-model="searchForm.categroyId" placeholder="可选择所属分类"
+                      :options="menuTree" />
           </div>
           <a-button type="primary" @click="categroyManage" style="margin-right: 1em">分类管理</a-button>
           <a-button type="primary" @click="search" style="margin-right: 1em">查询</a-button>
@@ -106,8 +107,8 @@ export default {
   },
   methods: {
     getMenuTree() {
-      ResourceCategroyService.getAll().then(({ data }) => {
-        this.menuTree = data.map(({ id: value, name: label }) => ({ value, label }));
+      ResourceCategroyService.getAll().then((menuTree) => {
+        this.menuTree = menuTree.map(({ id: value, name: label }) => ({ value, label }));
       });
     },
     search() {
@@ -115,7 +116,6 @@ export default {
       this.getList();
     },
     categroyManage() {
-      console.log(1);
       this.$router.push({
         name: 'resourceCategroy'
       });
@@ -128,7 +128,7 @@ export default {
     async getList() {
       this.tableLoading = true;
       try {
-        const { data: { records, total } } = await ResourceService.getList({
+        const { records, total } = await ResourceService.getList({
           page: this.pagination.current,
           pageSize: this.pagination.pageSize,
           ...this.searchForm
@@ -154,10 +154,11 @@ export default {
           let res;
           if (!this.modalForm.id) {
             res = await ResourceService.createResource(this.modalForm);
+            this.$message.success('添加成功');
           } else {
             res = await ResourceService.updateResource(this.modalForm);
+            this.$message.success('修改成功');
           }
-          this.$message.success(res.msg);
         } finally {
           this.confirmLoading = false;
           this.modalCancel();
@@ -182,8 +183,8 @@ export default {
         content: '该操作不可逆',
         onOk: () => {
           this.tableLoading = true;
-          ResourceService.deleteResource(id).then(res => {
-            this.$message.success(res.msg);
+          ResourceService.deleteResource(id).then(() => {
+            this.$message.success('删除成功');
             this.getList();
           });
         },

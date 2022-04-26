@@ -1,5 +1,5 @@
 <template>
-  <div style="color:white">
+  <div style="color:white;">
     <a-menu v-if="menuTree && menuTree.length" theme="dark" mode="inline" @click="to"
             :openKeys="openKeys" :selectedKeys="selectedKeys" @update:openKeys="changeOpen">
       <!-- collapsed ? [] : openKeys"的作用是取消收缩时会弹出子级菜单的默认行为，openKeys为空便不会再展开 -->
@@ -77,16 +77,15 @@ export default {
       const jwtPayload = localStorage.getItem(__auth_token_key__).split('.')[1];
       const parse = JSON.parse(atob(jwtPayload));
       const userId = parse.userId;
-      const { data } = await MenuService.getMenuTree();
+      const  data = await MenuService.getMenuTree();
       // const { data } = await RoleService.getUserMenus(userId)
       this.menuTree = data;
       const result = [];
       this.setPermissionKeys(data, result);
       this.$store.commit('auth/updatePermissionCollection', { permissionCollection: result });
     },
-    changeOpen(a) {
-      console.log(a);
-      this.openKeys = a;
+    changeOpen(openKeys) {
+      this.openKeys = openKeys;
     },
     setPermissionKeys(list, result) {
       list.map(i => {
@@ -95,12 +94,10 @@ export default {
         }
         if (i.children.length) {
           i.children.map(c => {
-            console.log(c.name + c.permission);
             if (c.permission) {
               result.push(c.permission);
             }
             if (c.children.length) {
-              console.log('菜单有子组件');
               this.setPermissionKeys(c.children, result);
             }
           });

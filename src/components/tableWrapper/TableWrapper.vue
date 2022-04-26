@@ -1,7 +1,7 @@
 <template>
   <div
     ref="layoutRef"
-    :style="{ height: '100%', ...layoutStyle }"
+    :style="{ ...layoutStyle }"
     class="a-container"
   >
     <div :style="headerStyle" ref="header" class="layout-header">
@@ -80,6 +80,7 @@ export default {
     getParentEleHeight() {
       const layoutStyle = Object.keys(this.layoutStyle);
       let parentEleHeight;
+      // 判断是否有设定高度
       if (layoutStyle.some((key) => key === 'height')) {
         parentEleHeight = this.getContentHeight(this.$refs.layoutRef);
       } else {
@@ -87,6 +88,7 @@ export default {
           this.$refs.layoutRef.parentElement
         );
       }
+      console.log(parentEleHeight);
       return parentEleHeight;
     },
     // 获取表格高度
@@ -104,7 +106,7 @@ export default {
           .querySelector('.ant-table-body')
           .classList.add('tbody-bottom-border');
       });
-      this.tableHeight = parentEleHeight - dValue - 39 - 56.5; // 39是表头，56.5是分页高度
+      this.tableHeight = parentEleHeight - dValue - 39 - (this.dataSource.length ? 56.5 : 0); // 39是表头，56.5是分页高度
       // dValue是header插槽的高度，39为表头高度，56.5为分页组件高度
     },
     // 获取元素的内容区域高度
@@ -112,7 +114,20 @@ export default {
       const node = window.getComputedStyle(ele);
       const elePaddingLeft = node.paddingTop.replace('px', '') - 0;
       const elePaddingRight = node.paddingBottom.replace('px', '') - 0;
-      return ele.clientHeight - elePaddingLeft - elePaddingRight;
+      console.log(node);
+      console.log(elePaddingLeft, elePaddingRight);
+      console.log(ele.childNodes);
+      console.log(ele.childNodes[1] === this.$refs.layoutRef);
+      let sibingEleHeight = 0;
+      // 排除当前容器及注释的节点
+      Array.from(ele.childNodes).filter((item) => item !== this.$refs.layoutRef && item.nodeType !== 8).forEach(node => {
+        const computedStyle = window.getComputedStyle(node);
+        const height = computedStyle.height.replace('px', '') - 0;
+        const mTop = computedStyle.marginTop.replace('px', '') - 0;
+        const mBottom = computedStyle.marginBottom.replace('px', '') - 0;
+        sibingEleHeight += height + mTop + mBottom;
+      });
+      return ele.clientHeight - elePaddingLeft - elePaddingRight - sibingEleHeight;
     }
   },
   props: {

@@ -1,7 +1,8 @@
 <template>
   <a-layout id="components-layout-demo-custom-trigger">
     <!-- 侧边栏 -->
-    <a-layout-sider style="box-shadow: 2px 0 3px 2px rgba(0,0,0,0.25);" v-model="collapsed" :trigger="null" :collapsible="true" :width="256">
+    <a-layout-sider style="box-shadow: 2px 0 3px 2px rgba(0,0,0,0.25);" v-model="collapsed" :trigger="null"
+                    :collapsible="true" :width="256">
       <!-- 公司Logo和名称 -->
       <router-link to="/dashboard" class="logo-and-title">
         <img style="width: 32px" src="@/assets/biz-logo.png" alt="company">
@@ -13,7 +14,7 @@
 
     <!-- 头部及主题内容部分 -->
     <a-layout>
-      <a-layout-header
+      <a-layout-header v-if="!fixedTabs"
         style="box-shadow: 0 2px 8px rgba(0,0,0,0.25); background: #fff;display: flex;justify-content: space-between;padding: 0 1rem;">
         <div style="display: inline-flex;align-items: center;">
           <a-icon style="line-height: 0" class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
@@ -24,7 +25,7 @@
           <Header />
         </div>
       </a-layout-header>
-      <a-layout-content :style="{margin: '10px 24px 0'}">
+      <a-layout-content style="margin: 10px 24px 0;">
         <TabsView />
         <Footer />
       </a-layout-content>
@@ -38,7 +39,7 @@ import Footer from 'components/layouts/footer/Footer';
 import MenuTree from 'components/menu/MenuTree';
 
 import TabsView from 'components/layouts/tab/TabsView';
-import { mapMutations } from 'vuex';
+import { mapMutations, mapState } from 'vuex';
 import { routes } from '@/router';
 import BreadCrumb from 'components/breadcrumb/BreadCrumb';
 
@@ -54,6 +55,9 @@ export default {
   },
   created() {
     this.correctContentHeight({ height: 144 });
+  },
+  computed:{
+    ...mapState("setting",["fixedTabs"])
   },
   methods: {
     ...mapMutations('setting', ['correctContentHeight'])

@@ -4,7 +4,7 @@
     <a-tree
         v-if="menuTree.length"
         v-model="checkedKeys" :replaceFields="{key:'id',title:'name'}"
-        checkable defaultExpandAll
+        :checkable="true" defaultExpandAll
         :tree-data="menuTree"
     />
     <a-divider></a-divider>

@@ -1,7 +1,7 @@
 import UserService from 'services/system/user';
 import { getToken, setToken } from 'utils/token';
 
-const storageAuthKey = '__user_info__';
+const storageAuthKey = 'user_info';
 const cache_tabs_key = 'cache_tabs';
 export const defaultActiveKey = '/dashboard';
 
@@ -18,21 +18,24 @@ const cacheTabs = (tabs) => {
  * @returns {any}
  */
 const getInitTabs = () => {
-  const tabs = localStorage.getItem(cache_tabs_key);
   const defaultTabs = [{
     title: '数据看板',
     key: defaultActiveKey,
     loading: false,
     closable: false
   }];
+  const tabs = localStorage.getItem(cache_tabs_key);
   try {
     // 防止tabs字符串反序列化报错
-    return tabs ? JSON.parse(tabs) : defaultTabs;
+    if(tabs){
+      return JSON.parse(tabs);
+    }
+    return defaultTabs;
   } catch {
     return defaultTabs;
   }
 };
-console.log(getInitTabs());
+
 
 export default {
   namespaced: true,
@@ -41,7 +44,7 @@ export default {
       token: undefined,
       refreshToken: undefined
     },
-    user: JSON.parse(getToken(storageAuthKey) || '{}'), // 用户信息
+    user: {}, // 用户信息
     permissionCollection: [], // 用户角色权限集合
     activeKey: defaultActiveKey, // 默认高亮tab
     editableTabs: getInitTabs(), // tabs栏菜单
@@ -51,13 +54,13 @@ export default {
     setTokenInfo(state, tokenInfo) {
       state.tokenInfo = tokenInfo;
     },
-    updateUser(state, { user }) {
+    updateUser(state, user) {
       state.user = user;
     },
     updatePermissionCollection(state, { permissionCollection }) {
       state.permissionCollection = permissionCollection;
     },
-    setEditableTabs(state, { tabs }) {
+    setEditableTabs(state, tabs) {
       state.editableTabs = [...state.editableTabs, ...tabs];
       cacheTabs(state.editableTabs);
     },
@@ -69,23 +72,19 @@ export default {
       state.activeKey = activeKey;
     },
     removeTab(state, { index }) {
-      // TODO 高亮异常，需要处理
-      // state.activeKey = state.editableTabs[index - 1].key;
       state.editableTabs.splice(index, 1);
       cacheTabs(state.editableTabs);
     },
     batchRemoveTabs(state, { begin, count }) {
-      // TODO 高亮异常，需要处理
-      // state.activeKey = state.editableTabs[index - 1].key;
       state.editableTabs.splice(begin, count);
       cacheTabs(state.editableTabs);
     }
   },
   actions: {
     async fetchUserInfo({ commit }) {
-      const { data } = await UserService.getUserInfo();
-      setToken(storageAuthKey, JSON.stringify(data));
-      commit('updateUser', { user: data });
+      const userInfo = await UserService.getUserInfo();
+      setToken(storageAuthKey, JSON.stringify(userInfo));
+      commit('updateUser', userInfo);
     }
   }
 };

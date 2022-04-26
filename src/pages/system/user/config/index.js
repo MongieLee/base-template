@@ -55,16 +55,4 @@ const columns = [
   }
 ];
 
-const rules = {
-  username: [
-    { required: true, trigger: 'change', message: '请输入用户名' }
-  ],
-  password: [
-    { required: true, trigger: 'change', message: '请输入密码' }
-  ],
-  verifyPassword: [
-    { required: true, trigger: 'change', message: '请输入确认密码' }
-  ]
-};
-
-export { columns, rules };
+export { columns };

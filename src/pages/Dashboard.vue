@@ -1,16 +1,16 @@
 <template>
-  <div class="container2">
+  <div>
     <a-row style="margin-bottom: 2.4rem;background: white;  padding: 1.2rem;display: flex;align-items:center;">
       <a-col :sm="24" :md="12" :xl="12">
         <div style="display: flex">
           <div class="avatar">
             <a-avatar :size="80" icon="user"
-                      :src="user.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'" />
+                      :src="user && user.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'" />
           </div>
           <div
             style="margin-left: 2rem;display: flex;flex-direction:column;justify-content:space-between;padding: 8px 0;">
             <div class="content-title animate__animated animate__bounce">
-              {{ timeFix }}，{{ user.username }}
+              {{ timeFix }}，{{ user && user.username }}
             </div>
             <div>前端工程师 | 百智科技 - 研发部</div>
           </div>
@@ -78,7 +78,6 @@
         </a-list>
       </a-card>
     </a-row>
-    <div style="height: 50vh"></div>
   </div>
 </template>
 
@@ -116,10 +115,6 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.container {
-  //border: 1px solid red;
-}
-
 .content-title {
   font-size: 2.4rem;
   font-weight: 500;

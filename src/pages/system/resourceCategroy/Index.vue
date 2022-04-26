@@ -55,7 +55,7 @@ const getOriginForm = () => ({
 });
 const getSearchForm = () => ({
   name: undefined,
-  sequence: undefined,
+  sequence: undefined
 });
 
 export default {
@@ -104,7 +104,7 @@ export default {
     async getList() {
       this.tableLoading = true;
       try {
-        const { data: { records, total } } = await ResourceCategroyService.getList({
+        const { records, total } = await ResourceCategroyService.getList({
           page: this.pagination.current,
           pageSize: this.pagination.pageSize,
           ...this.searchForm
@@ -129,11 +129,12 @@ export default {
         try {
           let res;
           if (!this.modalForm.id) {
-            res = await ResourceCategroyService.createResourceCategroy(this.modalForm);
+            await ResourceCategroyService.createResourceCategroy(this.modalForm);
+            this.$message.success('创建成功');
           } else {
-            res = await ResourceCategroyService.updateResourceCategroy(this.modalForm);
+            await ResourceCategroyService.updateResourceCategroy(this.modalForm);
+            this.$message.success('修改成功');
           }
-          this.$message.success(res.msg);
         } finally {
           this.confirmLoading = false;
           this.modalCancel();
@@ -159,7 +160,7 @@ export default {
         onOk: () => {
           this.tableLoading = true;
           ResourceCategroyService.deleteResourceCategroy(id).then(res => {
-            this.$message.success(res.msg);
+            this.$message.success('删除成功');
             this.getList();
           });
         },

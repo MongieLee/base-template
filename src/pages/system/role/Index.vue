@@ -11,17 +11,17 @@
       </template>
       <template slot="operate" slot-scope="data">
         <a @click="editRecord(data)">
-          <a-icon type="edit"/>
+          <a-icon type="edit" />
           编辑</a>
-        <simple-bar/>
+        <simple-bar />
         <a @click="allotMenu(data)">
           分配菜单</a>
-        <simple-bar/>
+        <simple-bar />
         <a @click="allotMenu(data)">
           分配资源</a>
-        <simple-bar/>
+        <simple-bar />
         <a class="red-text" @click="deleteRecord(data)">
-          <a-icon type="delete"/>
+          <a-icon type="delete" />
           删除</a>
       </template>
     </table-wrapper>
@@ -31,13 +31,13 @@
         <a-form-model :model="modalForm" :rules="rules" ref="ruleForm"
                       v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
           <a-form-model-item label="角色名称" prop="name">
-            <a-input placeholder="请输入角色名称" v-model="modalForm.name"/>
+            <a-input placeholder="请输入角色名称" v-model="modalForm.name" />
           </a-form-model-item>
           <a-form-model-item label="角色编码" prop="code">
-            <a-input placeholder="请输入角色编码" v-model="modalForm.code"/>
+            <a-input placeholder="请输入角色编码" v-model="modalForm.code" />
           </a-form-model-item>
           <a-form-model-item label="角色描述" prop="description">
-            <a-input placeholder="请输入资源名称" v-model="modalForm.description"/>
+            <a-input placeholder="请输入资源名称" v-model="modalForm.description" />
           </a-form-model-item>
         </a-form-model>
       </form>
@@ -47,17 +47,17 @@
 
 <script>
 
-import {mapState} from 'vuex';
-import {columns, rules} from './config';
+import { mapState } from 'vuex';
+import { columns, rules } from './config';
 import ResourceService from 'services/system/resource';
 import _ from 'lodash';
 import MenuService from 'services/menu';
-import RoleService from "services/system/role";
+import RoleService from 'services/system/role';
 
 const getOriginForm = () => ({
   name: undefined,
   code: undefined,
-  description: undefined,
+  description: undefined
 });
 export default {
   name: 'Menu',
@@ -86,27 +86,27 @@ export default {
     this.getList();
   },
   methods: {
-    allotMenu({id: roleId}) {
+    allotMenu({ id: roleId }) {
       this.$router.push({
-        name: "allotMenu",
-        params: {roleId}
-      })
+        name: 'allotMenu',
+        params: { roleId }
+      });
       this.getMenuTree();
       this.getList();
     },
 
     getMenuTree() {
-      MenuService.getMenuTree().then(({data}) => {
+      MenuService.getMenuTree().then(({ data }) => {
         this.menuTree = data;
       });
     },
     async getList() {
       this.tableLoading = true;
       try {
-        const {data: {records, total}} = await RoleService.getList({
+        const { records, total } = await RoleService.getList({
           page: this.pagination.current,
           pageSize: this.pagination.pageSize
-        })
+        });
         this.listData = records;
         this.pagination.total = total;
       } finally {
@@ -118,13 +118,13 @@ export default {
         if (!valid) return;
         this.confirmLoading = true;
         try {
-          let res;
           if (!this.modalForm.id) {
-            res = await RoleService.createRole(this.modalForm);
+            await RoleService.createRole(this.modalForm);
+            this.$message.success('创建成功');
           } else {
-            res = await RoleService.updateRole(this.modalForm);
+            await RoleService.updateRole(this.modalForm);
+            this.$message.success('更新成功');
           }
-          this.$message.success(res.msg);
         } finally {
           this.confirmLoading = false;
           this.modalCancel();
@@ -140,10 +140,10 @@ export default {
     },
     editRecord(data) {
       this.modalForm = _.cloneDeep(data);
-      this.modalTitle = "编辑角色"
+      this.modalTitle = '编辑角色';
       this.modalVisible = true;
     },
-    async deleteRecord({id, name}) {
+    async deleteRecord({ id, name }) {
       this.$modal.confirm({
         title: `确定要删除菜单【${name}】吗`,
         content: '该操作不可逆',
@@ -151,10 +151,10 @@ export default {
           this.tableLoading = true;
           RoleService.deleteRole(id).then(res => {
             ResourceService.deleteResource(id).then(res => {
-              this.$message.success(res.msg);
+              this.$message.success('删除成功');
               this.getList();
             });
-          })
+          });
         },
         onCancel: () => {
           this.$message.info('已取消删除操作');
@@ -162,13 +162,13 @@ export default {
       });
     },
     addRecord() {
-      this.modalTitle = "新增角色";
+      this.modalTitle = '新增角色';
       this.modalVisible = true;
     },
     tableChange() {
     }
-  },
-}
+  }
+};
 </script>
 
 <style lang="less" scoped>

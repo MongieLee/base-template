@@ -62,10 +62,10 @@ function parseRoutes(routesConfig) {
       };
     }
     route.router = routerMap[route.routeKey];
-    console.log("---------");
-    console.log(route);
-    console.log(route.router);
-    console.log("---------");
+    // console.log("---------");
+    // console.log(route);
+    // console.log(route.router);
+    // console.log("---------");
     if (!route.router) {
       throw new Error(`无法匹配到路由[${route.routeKey}],请检查配置`);
     }

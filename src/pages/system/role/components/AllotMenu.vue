@@ -1,18 +1,20 @@
 <template>
-  <a-card title="分配资源权限" style="border-bottom: none">
-    <a-button slot="extra" @click="$router.back()">返回</a-button>
-    <a-tree
-      @check="itemChecked"
-      v-if="menuTree.length"
-      v-model="checkedKeys" :replaceFields="{key:'id',title:'name'}"
-      checkable defaultExpandAll
-      :tree-data="menuTree"
-      :selectable="false"
-    />
-    <a-divider></a-divider>
-    <a-button @click="resetTree" :loading="loading" style="margin-right: 1rem">清空</a-button>
-    <a-button @click="save" type="primary" :loading="loading">保存权限</a-button>
-  </a-card>
+  <div>
+    <a-card title="分配资源权限" style="border-bottom: none">
+      <a-button slot="extra" @click="$router.back()">返回</a-button>
+      <a-tree
+        @check="itemChecked"
+        v-if="menuTree.length"
+        v-model="checkedKeys" :replaceFields="{key:'id',title:'name'}"
+        :checkable="true" defaultExpandAll
+        :tree-data="menuTree"
+        :selectable="false"
+      />
+      <a-divider></a-divider>
+      <a-button @click="resetTree" :loading="loading" style="margin-right: 1rem">清空</a-button>
+      <a-button @click="save" type="primary" :loading="loading">保存权限</a-button>
+    </a-card>
+  </div>
 </template>
 
 <script>
@@ -39,19 +41,15 @@ export default {
   async created() {
     await this.getMenuTree();
     await this.getMenuByRoleId();
-    console.log(this.$route);
   },
   computed: {
     ...mapState('setting', ['contentHeight'])
   },
   methods: {
     async getMenuByRoleId() {
-      const { data } = await RoleService.getMenusByRoleId(this.roleId);
+      const data = await RoleService.getMenusByRoleId(this.roleId);
       this.checkedKeys = data;
       this.finalSelectedList = data;
-      console.log(`this.menuTree`);
-      console.log(this.menuTree);
-      console.log(this.checkedKeys);
       // this.menuTree.forEach(item => {
       //   let index;
       //   if ((index = this.checkedKeys.findIndex(i => i === item.id)) > 0) {
@@ -63,7 +61,6 @@ export default {
       //   }
       // });
       this.cleanHalfParentId();
-      console.log(`this.menuTree`);
     },
     /**
      * antd Tree组件的回显规则是，如果给了父级id，则会将所有子级选中，由于后端返回的菜单id数组中，即使没有全选子级也会返回父级id
@@ -94,8 +91,7 @@ export default {
     },
 
     async getMenuTree() {
-      const { data } = await MenuService.getMenuTree();
-      this.menuTree = data;
+      this.menuTree = await MenuService.getMenuTree();
     },
     async save() {
       this.loading = true;
@@ -121,8 +117,4 @@ export default {
   }
 };
 </script>
-
-<style scoped>
-
-</style>
 

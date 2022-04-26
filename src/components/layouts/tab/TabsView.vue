@@ -2,15 +2,11 @@
   <div>
     <content-menu :item-list="list" :visible.sync="menuVisible" @select="onMenuSelect" />
     <TabsHeader @refresh="refresh" @clickPage="recoverPage" @contextmenu="onContextmenu" @closePage="closePage" />
-    <main :style="{minHeight: `calc(100vh - ${contentHeight}px)`,position:`relative`}">
-      <!--            <a-keep-alive :exclude-keys="excludeKeys">-->
-      <!--      <transition name="slide-left" style="border: 1px solid red">-->
-      <!--        <router-view re="tabContent" />-->
-      <transition
-        v-if="!shuaxin"
-        enter-active-class="animate__animated animate__bounceInLeft page-toggle-enter-active"
-        leave-active-class="animate__animated animate__bounceOutRight page-toggle-leave-active">
-        <router-view />
+    <main :style="{minHeight: `calc(100vh - ${contentHeight}px)`,position:`relative`}" ref="mainEle">
+      <transition v-if="!shuaxin"
+                  enter-active-class="animate__animated animate__bounceInLeft page-toggle-enter-active"
+                  leave-active-class="animate__animated animate__bounceOutRight page-toggle-leave-active">
+        <router-view :key="$route.path" />
       </transition>
       <div v-else
            style="height: 100%;position: absolute;width: 100%;display: flex;justify-content: center;align-items: center;">
@@ -18,9 +14,6 @@
           <a-spin size="large" tip="页面刷新中..." />
         </span>
       </div>
-      <!--      <router-view/>-->
-
-      <!--      <router-view ref="tabContent" />-->
     </main>
   </div>
 </template>
@@ -41,7 +34,7 @@ export default {
       list: [
         { text: '关闭左侧', key: 'closeLeft', icon: 'vertical-right' },
         { text: '关闭右侧', key: 'closeRight', icon: 'vertical-left' },
-        { text: '关闭其他', key: 'closeOther', icon: 'close' },
+        { text: '关闭其他', key: 'closeOther', icon: 'close' }
         // { text: '刷新页面', key: 'refresh', icon: 'sync' }
       ],
       currentPage: null,

@@ -23,7 +23,13 @@ const routes = [
         path: '/dashboard',
         name: 'dashboard',
         component: () => import(/* webpackChunkName:"dashboard"*/ 'pages/Dashboard.vue'),
-        meta: { title: '仪表盘', icon: 'bug', keepAlive: true, permission: ['dashboard'] }
+        meta: { title: '数据看板', icon: 'bug', keepAlive: true, permission: ['dashboard'] }
+      },
+      {
+        path: '/userInfo',
+        name: 'userInfo',
+        component: () => import(/* webpackChunkName:"dashboard"*/ 'pages/system/user/components/UserInfo.vue'),
+        meta: { title: '个人中心', icon: 'bug', keepAlive: true, permission: ['userInfo'] }
       },
       {
         path: '/system',
@@ -80,6 +86,7 @@ const routes = [
       }
     ]
   },
+
   {
     path: '/login',
     name: 'Login',

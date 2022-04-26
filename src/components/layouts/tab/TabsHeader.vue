@@ -58,7 +58,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('setting', ['fixedTabs']),
+    ...mapState('setting', ['fixedTabs', 'contentHeight']),
     ...mapState('auth', ['editableTabs', 'activeKey']),
     lockText() {
       return this.fixedTabs ? '点击解锁页头' : '点击锁定页头';
@@ -67,7 +67,7 @@ export default {
   methods: {
     // 是否锁定状态存储在store的setting[fixedTabs]中，默认为false
     // 修改store中的状态
-    ...mapMutations('setting', ['changeTabsFixed']),
+    ...mapMutations('setting', ['changeTabsFixed', 'correctContentHeight']),
     ...mapMutations('auth', ['changeActiveKey', 'setEditableTabs']),
     // 监听右键事件
     onContextmenu({ key }, evt) {
@@ -86,6 +86,7 @@ export default {
     // 点击锁定/解锁icon
     onLockClick() {
       this.changeTabsFixed({ status: !this.fixedTabs });
+      this.correctContentHeight({ height: this.fixedTabs ? this.contentHeight - 64 : this.contentHeight + 64 });
     },
     onClickItem(page) {
       console.log(page);

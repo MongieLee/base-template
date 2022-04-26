@@ -1,7 +1,7 @@
 <template>
   <div class="container2">
     <table-wrapper @change="tableChange" :data-source="listData" :columns="columns" :pagination="pagination"
-                   :row-class-name="tableRowClass" :loading="tableLoading">
+                   :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
           <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加</a-button>
@@ -38,15 +38,21 @@
             <a-input type="password" placeholder="请输入密码" v-model="modalForm.password" />
           </a-form-model-item>
           <a-form-model-item label="确认密码" prop="verifyPassword">
-            <a-input placeholder="请输入确认密码" v-model="modalForm.verifyPassword" />
+            <a-input type="password" placeholder="请输入确认密码" v-model="modalForm.verifyPassword" />
           </a-form-model-item>
           <a-form-model-item label="头像">
-            <a-upload class="avatar-uploader" :show-upload-list="false" :before-upload="uploadAvatar">
-              <img v-if="modalForm.avatar" alt="avatar" :src="modalForm.avatar">
+            <a-upload
+              name="avatar"
+              list-type="picture-card"
+              class="avatar-uploader"
+              :show-upload-list="false"
+              :before-upload="uploadAvatar"
+            >
+              <img style="height: 100%;width: 100%;" v-if="modalForm.avatar" alt="avatar" :src="modalForm.avatar">
               <div v-else>
                 <a-icon :type="avatarLoading ? 'loading' : 'plus'" />
                 <div class="ant-upload-text">
-                  Upload
+                  上传头像
                 </div>
               </div>
             </a-upload>
@@ -71,7 +77,7 @@
 
 <script>
 import { mapState } from 'vuex';
-import { columns, rules } from './config';
+import { columns } from './config';
 import _ from 'lodash';
 import MenuService from 'services/menu';
 import UserService from 'services/system/user';
@@ -79,6 +85,17 @@ import AuthService from 'services/auth';
 import FileService from 'services/file';
 import RoleService from 'services/system/role';
 
+const rules = {
+  username: [
+    { required: true, trigger: 'change', message: '请输入用户名' }
+  ],
+  password: [
+    { required: true, trigger: 'change', message: '请输入密码' }
+  ],
+  verifyPassword: [
+    { required: true, trigger: 'change', message: '请输入确认密码' }
+  ]
+};
 const getOriginForm = () => ({
   username: undefined,
   password: undefined,
@@ -89,7 +106,6 @@ export default {
   data() {
     return {
       modalForm: getOriginForm(),
-      rules,
       columns,
       listData: [],
       pagination: {
@@ -107,6 +123,27 @@ export default {
       roleSelectList: [],
       roleForm: {
         roleIds: []
+      },
+      rules: {
+        username: [
+          { required: true, trigger: 'change', message: '请输入用户名' }
+        ],
+        password: [
+          { required: true, trigger: 'change', message: '请输入密码' }
+        ],
+        verifyPassword: [
+          { required: true, trigger: 'change', message: '请输入确认密码' },
+          {
+            validator: (rule, value, callback) => {
+              if (value !== this.modalForm.password) {
+                callback(new Error('两次输入的密码不一致'));
+              } else {
+                callback();
+              }
+            },
+            trigger: 'change'
+          }
+        ]
       }
     };
   },
@@ -115,8 +152,8 @@ export default {
   },
   created() {
     this.getList();
-    RoleService.getAll().then(res => {
-      this.roleSelectList = res.data.map(i => ({ key: i.id, label: i.name }));
+    RoleService.getAll().then(roleList => {
+      this.roleSelectList = roleList.map(i => ({ key: i.id, label: i.name }));
     });
   },
   methods: {
@@ -128,7 +165,7 @@ export default {
     async getList() {
       this.tableLoading = true;
       try {
-        const { data: { records, total } } = await UserService.getList({
+        const { records, total } = await UserService.getList({
           page: this.pagination.current,
           pageSize: this.pagination.pageSize
         });
@@ -138,14 +175,14 @@ export default {
         this.tableLoading = false;
       }
     },
-    tableRowClass() {
-    },
-    tableChange() {
+    tableChange({ current, pageSize }) {
+      this.pagination.current = current;
+      this.pagination.pageSize = pageSize;
+      this.getList();
     },
     allotRole(data) {
       this.modalForm = _.cloneDeepWith(data);
       this.roleVisible = true;
-      console.log(data);
     },
     async allotRoles() {
       const { id: userId } = this.modalForm;
@@ -176,7 +213,7 @@ export default {
       const res = await FileService.uploadFile(FileService.getFormData(file));
       console.log(res);
       this.avatarLoading = false;
-      this.modalForm.avatar = res.data.path;
+      this.modalForm.avatar = res.path;
       return Promise.reject();
     },
     submitModal() {
@@ -187,11 +224,12 @@ export default {
           let res;
           if (!this.modalForm.id) {
             Reflect.deleteProperty(this.modalForm, 'verifyPassword');
-            res = await AuthService.register(this.modalForm);
+            await AuthService.register(this.modalForm);
+            this.$message.success('注册成功');
           } else {
-            res = await UserService.updateUser(this.modalForm);
+            await UserService.updateUser(this.modalForm);
+            this.$message.success('修改成功');
           }
-          this.$message.success(res.msg);
         } finally {
           this.confirmLoading = false;
           this.modalCancel();
@@ -216,8 +254,8 @@ export default {
         content: '该操作不可逆',
         onOk: async () => {
           this.tableLoading = true;
-          const { msg } = await UserService.deleteUser(id);
-          this.$message.success(msg);
+          await UserService.deleteUser(id);
+          this.$message.success('删除成功');
           this.getList();
         },
         onCancel: () => {
@@ -250,13 +288,9 @@ export default {
   padding: 1.2rem;
 }
 
-.avatar-uploader {
-  border: 1px solid red;
-}
-
 .avatar-uploader > .ant-upload {
-  width: 128px;
-  height: 128px;
+  width: 300px;
+  height: 300px;
 }
 
 .ant-upload-select-picture-card i {
