@@ -1,5 +1,5 @@
 <template>
-  <div class="fuck">
+  <div class="fixed-height-wrapper">
     <table-wrapper @change="tableChange" :data-source="menuTree" :columns="columns" :pagination="pagination"
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">

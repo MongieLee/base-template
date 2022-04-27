@@ -9,7 +9,7 @@ import 'nprogress/nprogress.css';
 import { formatAuthority } from '@/router/helps/handlerRoutes';
 import options from '@/router/async/config';
 import 'animate.css'
-import "./directives/inspectPermission"
+import './directives/inspectPermission'
 
 // import 'quill/dist/quill.core.css' // import styles
 // import 'quill/dist/quill.snow.css' // for snow theme

@@ -6,7 +6,7 @@ const columns = [
     customRender(_, __, index) {
       return ++index;
     },
-    width: 50,
+    width: 70,
     align: 'center'
   },
   {
@@ -19,7 +19,7 @@ const columns = [
       customRender: 'avatar'
     },
     dataIndex: 'avatar',
-    width: 50,
+    width: '10%',
     align: 'center'
   },
   {
@@ -35,7 +35,7 @@ const columns = [
     scopedSlots: {
       customRender: 'status'
     },
-    width: 60,
+    width: '10%',
     align: 'center'
   },
   {

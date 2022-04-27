@@ -1,26 +1,44 @@
 <template>
   <div class="wrapper">
     <div class="header-avatar">
-      <a-icon @click="fullScreenHandler" style="font-size: 2.2rem"
+      <a-icon @click="fullScreenHandler" style="font-size: 1.8rem"
               :type="fullscreenIconStatus?`fullscreen-exit`:`fullscreen`"></a-icon>
     </div>
-    <a-dropdown trigger="click">
+    <a-dropdown class="lang header-item" :overlayStyle="{width:'380px'}" :trigger="['click']"
+                v-model="notificationVisible"
+                placement="bottomLeft">
       <div class="header-avatar">
         <a-badge count="5">
-          <a-icon style="font-size: 2.2rem"
+          <a-icon style="font-size:1.8rem"
                   type="bell"></a-icon>
         </a-badge>
       </div>
-      <div slot="overlay" style="background: white;padding: 0 2rem 1rem;box-shadow: 1px 0 1px 1px rgba(0,0,0,0.1)" >
-        <a-tabs default-active-key="1" >
-          <a-tab-pane key="1" tab="Tab 1">
-            Content of Tab Pane 1
+      <div slot="overlay"
+           style=";background: white;margin-top: 2px;border-radius:3px;box-shadow: 0 0 2px 3px rgba(0,0,0,.1);">
+        <a-tabs class="dropdown-tabs" :tabBarStyle="{textAlign: 'center'}" :style="{width: '100%'}">
+          <a-tab-pane tab="消息通知" key="1">
+            <a-list class="tab-pane">
+              <a-list-item :class="{delete:item.IsDone}" v-for="item in [{title:123,Title:'123'},{title:123,Title:'123'}]" :key="item.id">
+                <a-list-item-meta :title="item.Title" :description="item.Remark">
+                </a-list-item-meta>
+              </a-list-item>
+            </a-list>
           </a-tab-pane>
-          <a-tab-pane key="2" tab="Tab 2" force-render>
-            Content of Tab Pane 2
+          <a-tab-pane tab="消息通知" key="2">
+            <a-list class="tab-pane">
+              <a-list-item :class="{delete:item.IsDone}" v-for="item in [{title:123,Title:'123'}]" :key="item.id">
+                <a-list-item-meta :title="item.Title" :description="item.Remark">
+                </a-list-item-meta>
+              </a-list-item>
+            </a-list>
           </a-tab-pane>
-          <a-tab-pane key="3" tab="Tab 3">
-            Content of Tab Pane 3
+          <a-tab-pane tab="消息通知" key="3">
+            <a-list class="tab-pane">
+              <a-list-item :class="{delete:item.IsDone}" v-for="item in [{title:123,Title:'123'}]" :key="item.id">
+                <a-list-item-meta :title="item.Title" :description="item.Remark">
+                </a-list-item-meta>
+              </a-list-item>
+            </a-list>
           </a-tab-pane>
         </a-tabs>
       </div>
@@ -53,7 +71,8 @@ import { exitFullScreen, isFullScreen, openFullScreen } from 'utils/fullscreen';
 export default {
   data() {
     return {
-      fullscreenIconStatus: false
+      fullscreenIconStatus: false,
+      notificationVisible: false
     };
   },
   created() {
@@ -109,5 +128,15 @@ export default {
 
 .wrapper {
   display: flex;
+}
+
+.tab-pane {
+  overflow: auto;
+  min-height: 150px;
+  max-height: 290px;
+}
+
+.ant-list-item{
+  padding: 12px 24px;
 }
 </style>

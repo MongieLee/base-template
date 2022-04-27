@@ -1,26 +1,43 @@
 <template>
-  <div
-    ref="layoutRef"
-    :style="{ ...layoutStyle }"
-    class="a-container"
-  >
+  <div ref="layoutRef" :style="layoutStyle" class="a-container">
     <div :style="headerStyle" ref="header" class="layout-header">
-      <div style="text-align: right; display: flex; align-items: center">
-        <div style="flex: 1">
-          <slot name="header" />
-        </div>
-        <div v-if="toolbarVisible">
-          <a-button
-            @click="handlerExport"
-            style="margin-left: 0.5em"
-            title="导出为Excel"
-            size="small"
-            ghost
-            type="primary"
-          >
-            <a-icon type="export" />
-          </a-button>
-        </div>
+      <slot name="header" />
+      <div v-if="showOperation" class="operation-bar">
+        <a-tooltip @click="$emit('table:refresh')" class="table-icon" placement="top" title="刷新">
+          <a-icon style="font-size: 18px" type="reload" />
+        </a-tooltip>
+        <a-tooltip class="table-icon" placement="top" title="密度">
+          <a-dropdown :trigger="['click']">
+            <a-icon style="font-size: 18px" type="ordered-list" />
+            <a-menu @click="sizeChange" slot="overlay">
+              <a-menu-item key="default">
+                <a>宽松</a>
+              </a-menu-item>
+              <a-menu-item key="middle">
+                <a>中等</a>
+              </a-menu-item>
+              <a-menu-item key="small">
+                <a>紧密</a>
+              </a-menu-item>
+            </a-menu>
+          </a-dropdown>
+        </a-tooltip>
+        <a-tooltip class="table-icon" placement="top" title="列展示">
+          <a-dropdown v-model="columnConfigVisible" :trigger="['click']" placement="bottomRight">
+            <a-icon style="font-size: 18px" type="setting" />
+            <div slot="overlay" style="background: white;box-shadow: 0 0 2px 1px rgba(0,0,0,0.2);border-radius: 4px;">
+              <div
+                style="width:160px;padding: 6px 12px;border-bottom: 1px solid #dcd8d8;display: flex;justify-content: space-between">
+                <a-checkbox v-model="everyChecked" @change="allColumnChange">列展示</a-checkbox>
+                <a @click="resetColumnConfiguration">重置</a></div>
+              <div style="padding: 6px 12px;">
+                <div v-for="(item,index) in cloneColumns" :key="index">
+                  <a-checkbox v-model="item.checked"> {{ item.title }}</a-checkbox>
+                </div>
+              </div>
+            </div>
+          </a-dropdown>
+        </a-tooltip>
       </div>
     </div>
     <a-table
@@ -28,11 +45,10 @@
       :rowSelection="rowSelection"
       bordered
       :data-source="dataSource"
-      :columns="columns"
-      size="small"
+      :columns="columnConfiguration"
+      :size="customSize"
       :rowKey="rowKey"
       :pagination="typeof pagination === false ? pagination :{ ...defaultPagination, ...pagination }"
-      :scroll="{ y: tableHeight, ...scroll }"
       :loading="loading"
       @change="paginationChange"
       :rowClassName="rowClassName"
@@ -47,10 +63,15 @@
 </template>
 
 <script>
+import _ from 'lodash';
+
 export default {
   data() {
     return {
-      cloneColumns: this.columns,
+      cloneColumns: _.cloneDeep(this.columns).map(i => {
+        i.checked = true;
+        return i;
+      }),
       defaultPagination: {
         showSizeChanger: true,
         size: 'small',
@@ -58,7 +79,9 @@ export default {
           return `当前${range[0]}-${range[1]}条，共 ${total} 条`;
         }
       },
-      tableHeight: 0
+      tableHeight: 0,
+      customSize: 'small',
+      columnConfigVisible: false
     };
   },
   mounted() {
@@ -67,8 +90,43 @@ export default {
     });
     window.addEventListener('resize', this.watchWindowResize);
   },
-
+  computed: {
+    everyChecked: {
+      get() {
+        return this.cloneColumns.every(i => i.checked);
+      },
+      set(value) {
+        return value;
+        // return this.cloneColumns.every(i => i.checked);
+      }
+    },
+    columnConfiguration() {
+      return this.cloneColumns.filter(i => i.checked);
+    }
+  },
   methods: {
+    allColumnChange(a) {
+      if (a.target.checked) {
+        this.cloneColumns = this.cloneColumns.map(i => {
+          i.checked = true;
+          return i;
+        });
+      } else {
+        this.cloneColumns = this.cloneColumns.map(i => {
+          i.checked = false;
+          return i;
+        });
+      }
+    },
+    resetColumnConfiguration() {
+      this.cloneColumns = this.cloneColumns.map(i => {
+        i.checked = true;
+        return i;
+      });
+    },
+    sizeChange({ key }) {
+      this.customSize = key;
+    },
     paginationChange(pagination, filters, sorter, { currentDataSource }) {
       this.$emit('change', pagination, filters, sorter, { currentDataSource });
     },
@@ -106,7 +164,7 @@ export default {
           .querySelector('.ant-table-body')
           .classList.add('tbody-bottom-border');
       });
-      this.tableHeight = parentEleHeight - dValue - 39 - (this.dataSource.length ? 56.5 : 0); // 39是表头，56.5是分页高度
+      this.tableHeight = parentEleHeight - dValue - 39 - (this.dataSource.length ? 56.5 : 0);
       // dValue是header插槽的高度，39为表头高度，56.5为分页组件高度
     },
     // 获取元素的内容区域高度
@@ -118,16 +176,16 @@ export default {
       console.log(elePaddingLeft, elePaddingRight);
       console.log(ele.childNodes);
       console.log(ele.childNodes[1] === this.$refs.layoutRef);
-      let sibingEleHeight = 0;
+      let siblingsEleHeight = 0;
       // 排除当前容器及注释的节点
       Array.from(ele.childNodes).filter((item) => item !== this.$refs.layoutRef && item.nodeType !== 8).forEach(node => {
         const computedStyle = window.getComputedStyle(node);
         const height = computedStyle.height.replace('px', '') - 0;
         const mTop = computedStyle.marginTop.replace('px', '') - 0;
         const mBottom = computedStyle.marginBottom.replace('px', '') - 0;
-        sibingEleHeight += height + mTop + mBottom;
+        siblingsEleHeight += height + mTop + mBottom;
       });
-      return ele.clientHeight - elePaddingLeft - elePaddingRight - sibingEleHeight;
+      return ele.clientHeight - elePaddingLeft - elePaddingRight - siblingsEleHeight;
     }
   },
   props: {
@@ -202,6 +260,15 @@ export default {
     // 指定树形结构的列名
     childrenColumnName: {
       type: String
+    },
+    // 是否显示辅助操作栏
+    showOperation: {
+      type: Boolean,
+      default: () => true
+    },
+    autoCalculateHeight: {
+      type: Boolean,
+      default: () => true
     }
   },
   destroyed() {
@@ -219,5 +286,26 @@ export default {
   .layout-header {
     overflow: hidden;
   }
+}
+
+.table-icon {
+  &:hover {
+    cursor: pointer;
+    //color: primary-color;
+    color: #1890ff;
+  }
+}
+
+.operation-bar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  height: 40px;
+
+  & > :not(:first-child) {
+    margin-left: 24px;
+  }
+
+  margin-right: 4px;
 }
 </style>

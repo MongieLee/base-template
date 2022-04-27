@@ -28,8 +28,8 @@ import {
   Popover,
   Tag,
   Radio,
-  Row,
-  Col, Statistic, List, Spin, Badge
+  Row,Checkbox,
+  Col, Statistic, List, Spin, Badge, Form, TimePicker
 } from 'ant-design-vue';
 
 Vue.use(Modal); // use [Vue.component] won't register directive and throw directive Error
@@ -46,9 +46,10 @@ const { Item: MenuItem, SubMenu } = Menu;
 const { Item: FormModelItem } = FormModel;
 const { TabPane } = Tabs;
 const { TextArea } = Input;
+const { Item: FormItem } = Form;
 Vue.prototype.$message = message;
 
-const components = [Badge, Spin, ListMeta, List, ListItem, Grid, Statistic, Row, Col, Group, Radio, Tag, Popover, Select, BreadcrumbItem, Button, DatePicker, Input, ConfigProvider, Icon, Layout, Menu, Sider, Header, Content, Footer, Breadcrumb, MenuItem, SubMenu, FormModel, FormModelItem, Card, Divider, Dropdown, Avatar, Table, Result, Tabs, TabPane, Tooltip, TreeSelect, Popconfirm, TextArea, Tree, Upload, InputNumber
+const components = [Checkbox,TimePicker, FormItem, Form, Badge, Spin, ListMeta, List, ListItem, Grid, Statistic, Row, Col, Group, Radio, Tag, Popover, Select, BreadcrumbItem, Button, DatePicker, Input, ConfigProvider, Icon, Layout, Menu, Sider, Header, Content, Footer, Breadcrumb, MenuItem, SubMenu, FormModel, FormModelItem, Card, Divider, Dropdown, Avatar, Table, Result, Tabs, TabPane, Tooltip, TreeSelect, Popconfirm, TextArea, Tree, Upload, InputNumber
 ];
 
 export const batchImport = (components) => {

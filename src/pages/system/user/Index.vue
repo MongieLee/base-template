@@ -1,10 +1,49 @@
 <template>
-  <div class="container2">
+  <div class="fixed-height-wrapper ">
     <table-wrapper @change="tableChange" :data-source="listData" :columns="columns" :pagination="pagination"
-                   :loading="tableLoading">
+                   :loading="tableLoading" @table:refresh="tableRefresh">
       <template slot="header">
         <div ref="search" class="action-container">
-          <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加</a-button>
+        </div>
+        <div class="table-page-search-wrapper">
+          <a-form ref="queryForm" layout="inline">
+            <a-row :gutter="48">
+              <a-col :md="6" :sm="24">
+                <a-form-item label="账号">
+                  <a-input v-model="queryForm.username" placeholder="可输入账号搜索" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="昵称">
+                  <a-input v-model="queryForm.nickname" placeholder="可输入昵称搜索" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="创建时间">
+                  <a-date-picker style="width: 100%" v-model="queryForm.createdAt" placeholder="可按照创建时间搜索" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-model-item label="用户角色" prop="roleIds">
+                  <a-select placeholder="可按照角色搜索" :options="roleSelectList" allowClear
+                            v-model="queryForm.roleId" />
+                </a-form-model-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+                <a-form-item label="账号状态">
+                  <a-select allowClear placeholder="可按照账号状态搜索" :options="[{key:true,label:'正常'},{key:false,label:'禁用'}]"
+                            v-model="queryForm.status" />
+                </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+              <span class="table-page-search-submitButtons">
+                <a-button type="primary" @click="addRecord" style="margin-right: 1em">添加</a-button>
+                <a-button type="primary" @click="getList">查询</a-button>
+                <a-button style="margin-left: 8px" @click="resetQueryForm">重置</a-button>
+              </span>
+              </a-col>
+            </a-row>
+          </a-form>
         </div>
       </template>
       <template slot="avatar" slot-scope="{data}">
@@ -33,6 +72,9 @@
                       v-bind="{ labelCol: { span: 4 }, wrapperCol: { span: 16 } }">
           <a-form-model-item label="用户名" prop="username">
             <a-input placeholder="请输入用户名" v-model="modalForm.username" />
+          </a-form-model-item>
+          <a-form-model-item label="昵称" prop="nickname">
+            <a-input placeholder="请输入昵称" v-model="modalForm.nickname" />
           </a-form-model-item>
           <a-form-model-item label="密码" prop="password">
             <a-input type="password" placeholder="请输入密码" v-model="modalForm.password" />
@@ -97,14 +139,25 @@ const rules = {
   ]
 };
 const getOriginForm = () => ({
-  username: undefined,
-  password: undefined,
-  verifyPassword: undefined
+  username: undefined, // 用户名
+  nickname: undefined, // 昵称
+  password: undefined, // 密码
+  verifyPassword: undefined // 确认密码
 });
+
+const getQueryForm = () => ({
+  username: undefined, // 用户名
+  nickname: undefined, // 昵称
+  roleId: undefined, // 角色
+  createdAt: null, // 创建时间
+  status: undefined // 状态
+});
+
 export default {
   name: 'User',
   data() {
     return {
+      queryForm: getQueryForm(),
       modalForm: getOriginForm(),
       columns,
       listData: [],
@@ -128,6 +181,9 @@ export default {
         username: [
           { required: true, trigger: 'change', message: '请输入用户名' }
         ],
+        nickname: [
+          { required: true, trigger: 'change', message: '请输入昵称' }
+        ],
         password: [
           { required: true, trigger: 'change', message: '请输入密码' }
         ],
@@ -135,6 +191,7 @@ export default {
           { required: true, trigger: 'change', message: '请输入确认密码' },
           {
             validator: (rule, value, callback) => {
+              // 需要拿表达数据，所以需要写在组件内通过this获取
               if (value !== this.modalForm.password) {
                 callback(new Error('两次输入的密码不一致'));
               } else {
@@ -237,6 +294,14 @@ export default {
         }
       });
     },
+    tableRefresh(){
+      // this.$message.error(1)
+      this.getList();
+    },
+    resetQueryForm() {
+      this.queryForm = getQueryForm();
+      this.getList();
+    },
     modalCancel() {
       // this.$refs.ruleForm.clearValidate();
       this.$refs.ruleForm.resetFields();
@@ -281,12 +346,7 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.container2 {
-  height: 100%;
-  position: absolute;
-  background-color: #fff;
-  padding: 1.2rem;
-}
+
 
 .avatar-uploader > .ant-upload {
   width: 300px;

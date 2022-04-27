@@ -1,5 +1,5 @@
 <template>
-  <div class="container3" :style="`height: calc(100vh - ${contentHeight}px)`">
+  <div class="fixed-height-wrapper">
     <table-wrapper @change="tableChange" :data-source="listData" :columns="columns" :pagination="pagination"
                    :loading="tableLoading">
       :row-class-name="tableRowClass" :loading="tableLoading">

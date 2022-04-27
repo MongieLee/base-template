@@ -1,3 +1,5 @@
+//@import '~ant-design-vue/dist/antd.less';
+
 .action-container {
   padding: 8px 0 8px 4px;
   display: flex;
@@ -40,3 +42,45 @@
 }
 
 @global-content-bg-color: #ffffff;
+.table-page-search-wrapper {
+
+  .ant-form-inline {
+    .ant-form-item {
+      display: flex;
+      margin-bottom: 24px;
+      margin-right: 0;
+
+      .ant-form-item-control-wrapper {
+        flex: 1 1;
+        display: inline-block;
+        vertical-align: middle;
+      }
+
+      > .ant-form-item-label {
+        line-height: 32px;
+        padding-right: 8px;
+        width: auto;
+      }
+
+      .ant-form-item-control {
+        height: 32px;
+        line-height: 32px;
+      }
+    }
+  }
+
+  .table-page-search-submitButtons {
+    display: flex;
+    margin-bottom: 1.4rem;
+    white-space: nowrap;
+  }
+}
+
+// 固定内容页，超出滚动
+.fixed-height-wrapper {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  background-color: #fff;
+  padding: 1.2rem;
+}
