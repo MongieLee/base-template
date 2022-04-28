@@ -1,19 +1,27 @@
 <template>
   <div class="container">
-    <p style="font-size: 4rem">{{ topic }}</p>
     <a-card
-      :style="{width: `40rem`,minHeight: `46rem`,padding: `3.2rem`,boxShadow: `rgba(0,0,0,0.1) 0 0 10px`,}">
+      :style="{width: `460px`,minHeight: `46rem`,padding: `3.2rem`,boxShadow: `rgba(0,0,0,0.1) 0 0 10px`,}">
+      <div style="display: flex;align-items: center;justify-content: center">
+        <img width="50" src="@/assets/biz-logo.png" alt="company's log" />
+        <span style="margin-left: 1rem;font-size: 2.8rem;font-weight: bold">{{ topic }}</span>
+      </div>
+      <p style="text-align: center;font-size: 1.4rem;color:#848587;">珠海百智科技</p>
       <a-form-model ref="ruleForm" :model="userForm" :rules="rules">
         <a-form-model-item prop="username">
-          <a-input v-model="userForm.username" placeholder="请输入用户名" />
+          <a-input v-model="userForm.username" size="large" placeholder="请输入用户名">
+            <a-icon slot="prefix" type="user" />
+          </a-input>
         </a-form-model-item>
         <a-form-model-item prop="password">
-          <a-input v-model="userForm.password" type="password" placeholder="请输入密码" />
+          <a-input v-model="userForm.password" size="large" type="password" placeholder="请输入密码">
+            <a-icon slot="prefix" type="lock" />
+          </a-input>
         </a-form-model-item>
-        <a-button :loading="loginLoading" type="primary" style="width: 100%" @click="login">
+        <a-button :loading="loginLoading" type="primary" style="width: 100%;height: 40px" @click="login">
           登录
         </a-button>
-        <a-button type="primary" style="width: 100%" @click="register">注册</a-button>
+        <!--        <a-button type="primary" style="width: 100%" @click="register">注册</a-button>-->
         <a-divider />
       </a-form-model>
     </a-card>
@@ -81,6 +89,7 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding-top: 20vh;
   background-repeat: no-repeat;
   background-attachment: fixed;
   background-size: calc(((100vw - 40rem) / 2) - 3.2rem),

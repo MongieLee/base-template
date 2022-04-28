@@ -2,6 +2,7 @@
   <div ref="layoutRef" :style="layoutStyle" class="a-container">
     <div :style="headerStyle" ref="header" class="layout-header">
       <slot name="header" />
+      <!-- 刷新 表格大小 控制列 -->
       <div v-if="showOperation" class="operation-bar">
         <a-tooltip @click="$emit('table:refresh')" class="table-icon" placement="top" title="刷新">
           <a-icon style="font-size: 18px" type="reload" />
@@ -40,6 +41,8 @@
         </a-tooltip>
       </div>
     </div>
+
+    <!-- 实际表格区域 -->
     <a-table
       :childrenColumnName="childrenColumnName"
       :rowSelection="rowSelection"
@@ -48,7 +51,8 @@
       :columns="columnConfiguration"
       :size="customSize"
       :rowKey="rowKey"
-      :pagination="typeof pagination === false ? pagination :{ ...defaultPagination, ...pagination }"
+      :scroll="scrollConfig"
+      :pagination="typeof pagination === 'boolean' ? pagination :{ ...defaultPagination, ...pagination }"
       :loading="loading"
       @change="paginationChange"
       :rowClassName="rowClassName"
@@ -65,7 +69,10 @@
 <script>
 import _ from 'lodash';
 
+const pxConvertNumber = (str) => Number(str.replace('px', ''));
+
 export default {
+  name: 'TableWrapper',
   data() {
     return {
       cloneColumns: _.cloneDeep(this.columns).map(i => {
@@ -84,20 +91,18 @@ export default {
       columnConfigVisible: false
     };
   },
-  mounted() {
-    setTimeout(() => {
-      this.getListHeight(this.getParentEleHeight());
-    });
-    window.addEventListener('resize', this.watchWindowResize);
-  },
   computed: {
+    scrollConfig() {
+      return Reflect.ownKeys(this.scroll).keys().length === 0
+        ? false
+        : ({ ...this.scroll });
+    },
     everyChecked: {
       get() {
-        return this.cloneColumns.every(i => i.checked);
+        return this.cloneColumns.every(record => record.checked);
       },
       set(value) {
         return value;
-        // return this.cloneColumns.every(i => i.checked);
       }
     },
     columnConfiguration() {
@@ -105,88 +110,21 @@ export default {
     }
   },
   methods: {
-    allColumnChange(a) {
-      if (a.target.checked) {
-        this.cloneColumns = this.cloneColumns.map(i => {
-          i.checked = true;
-          return i;
-        });
-      } else {
-        this.cloneColumns = this.cloneColumns.map(i => {
-          i.checked = false;
-          return i;
-        });
-      }
+    allColumnChange(e) {
+      this.cloneColumns.forEach(i => i.checked = e.target.checked);
     },
     resetColumnConfiguration() {
-      this.cloneColumns = this.cloneColumns.map(i => {
-        i.checked = true;
-        return i;
-      });
+      this.cloneColumns.forEach(i => i.checked = true);
     },
+    // 更改表格尺寸
     sizeChange({ key }) {
       this.customSize = key;
+      // this.getContentHeight();
     },
+    // 分页页码及页数变更时触发提交一个事件供外部接收回调
     paginationChange(pagination, filters, sorter, { currentDataSource }) {
       this.$emit('change', pagination, filters, sorter, { currentDataSource });
     },
-    // resize回调函数
-    watchWindowResize() {
-      this.getListHeight(this.getParentEleHeight());
-    },
-    // 获取父元素高度
-    getParentEleHeight() {
-      const layoutStyle = Object.keys(this.layoutStyle);
-      let parentEleHeight;
-      // 判断是否有设定高度
-      if (layoutStyle.some((key) => key === 'height')) {
-        parentEleHeight = this.getContentHeight(this.$refs.layoutRef);
-      } else {
-        parentEleHeight = this.getContentHeight(
-          this.$refs.layoutRef.parentElement
-        );
-      }
-      console.log(parentEleHeight);
-      return parentEleHeight;
-    },
-    // 获取表格高度
-    getListHeight(parentEleHeight) {
-      const dom = this.$refs.layoutRef.querySelector('.ant-table');
-      let dValue = 0;
-      const headerStyles = window.getComputedStyle(this.$refs.header);
-      dValue += headerStyles.marginTop.replace('px', '') - 0;
-      dValue += headerStyles.marginBottom.replace('px', '') - 0;
-      dValue += headerStyles.height.replace('px', '') - 0;
-      dom.style.minHeight = parentEleHeight - dValue - 56.5 + 'px'; // 强行拉高表格
-      dom.style.borderRight = `1px solid #e8e8e8`; // 处理表格👉边框缺失
-      setTimeout(() => {
-        dom
-          .querySelector('.ant-table-body')
-          .classList.add('tbody-bottom-border');
-      });
-      this.tableHeight = parentEleHeight - dValue - 39 - (this.dataSource.length ? 56.5 : 0);
-      // dValue是header插槽的高度，39为表头高度，56.5为分页组件高度
-    },
-    // 获取元素的内容区域高度
-    getContentHeight(ele) {
-      const node = window.getComputedStyle(ele);
-      const elePaddingLeft = node.paddingTop.replace('px', '') - 0;
-      const elePaddingRight = node.paddingBottom.replace('px', '') - 0;
-      console.log(node);
-      console.log(elePaddingLeft, elePaddingRight);
-      console.log(ele.childNodes);
-      console.log(ele.childNodes[1] === this.$refs.layoutRef);
-      let siblingsEleHeight = 0;
-      // 排除当前容器及注释的节点
-      Array.from(ele.childNodes).filter((item) => item !== this.$refs.layoutRef && item.nodeType !== 8).forEach(node => {
-        const computedStyle = window.getComputedStyle(node);
-        const height = computedStyle.height.replace('px', '') - 0;
-        const mTop = computedStyle.marginTop.replace('px', '') - 0;
-        const mBottom = computedStyle.marginBottom.replace('px', '') - 0;
-        siblingsEleHeight += height + mTop + mBottom;
-      });
-      return ele.clientHeight - elePaddingLeft - elePaddingRight - siblingsEleHeight;
-    }
   },
   props: {
     // y、x轴滚动设置
@@ -244,15 +182,6 @@ export default {
     customRow: {
       type: Function
     },
-    // 工具栏是否隐藏显示
-    toolbarVisible: {
-      type: Boolean,
-      default: () => false
-    },
-    // 导出按钮回调
-    exportCallback: {
-      type: Function
-    },
     // 选择功能配置
     rowSelection: {
       type: Object
@@ -271,7 +200,7 @@ export default {
       default: () => true
     }
   },
-  destroyed() {
+  beforeDestroy() {
     window.removeEventListener('resize', this.watchWindowResize);
   }
 };

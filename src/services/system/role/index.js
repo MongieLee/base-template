@@ -49,7 +49,6 @@ class RoleService {
   }
 
   static getUserMenus(userId) {
-    console.log({ userId });
     return getRequest(apiPath.getUserMenus + userId);
   }
 }

@@ -36,12 +36,7 @@ export default {
       routes: routes[0].children
     };
   },
-  created() {
-    // 158为非内容区所占高度
-    this.correctContentHeight({ height: 158 });
-  },
   methods: {
-    ...mapMutations('setting', ['correctContentHeight']),
     to(menu) {
       this.$router.push(menu.path);
     }

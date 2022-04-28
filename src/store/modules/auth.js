@@ -27,7 +27,7 @@ const getInitTabs = () => {
   const tabs = localStorage.getItem(cache_tabs_key);
   try {
     // 防止tabs字符串反序列化报错
-    if(tabs){
+    if (tabs) {
       return JSON.parse(tabs);
     }
     return defaultTabs;
@@ -57,7 +57,7 @@ export default {
     updateUser(state, user) {
       state.user = user;
     },
-    updatePermissionCollection(state, { permissionCollection }) {
+    updatePermissionCollection(state, permissionCollection) {
       state.permissionCollection = permissionCollection;
     },
     setEditableTabs(state, tabs) {
@@ -78,6 +78,10 @@ export default {
     batchRemoveTabs(state, { begin, count }) {
       state.editableTabs.splice(begin, count);
       cacheTabs(state.editableTabs);
+    },
+    clearCacheTabs(state) {
+      localStorage.removeItem(cache_tabs_key);
+      state.editableTabs = getInitTabs();
     }
   },
   actions: {

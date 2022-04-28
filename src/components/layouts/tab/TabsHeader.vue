@@ -1,9 +1,8 @@
 <template>
   <a-tabs :activeKey="activeKey" type="editable-card" hide-add
           :tabBarStyle="{background: `#f0f2f5`,margin:0}">
-    <a-tooltip placement="left" :title="lockText" slot="tabBarExtraContent">
-      <a-icon theme="filled" @click="onLockClick" class="header-lock" :type="fixedTabs ? 'lock' : 'unlock'" />
-    </a-tooltip>
+    <a-icon theme="filled" slot="tabBarExtraContent" @click="onLockClick" class="header-lock"
+            :type="fixedTabs ? 'lock' : 'unlock'" />
     <a-tab-pane v-for="page in editableTabs" :key="page.key">
       <div slot="tab" @click="onClickItem(page)" class="tab" @contextmenu="evt => onContextmenu(page,evt)">
         <a-icon v-if="$route.path == page.key" @click.stop="onRefresh(page)"
@@ -58,7 +57,7 @@ export default {
     };
   },
   computed: {
-    ...mapState('setting', ['fixedTabs', 'contentHeight']),
+    ...mapState('setting', ['fixedTabs', 'contentDifferenceHeight']),
     ...mapState('auth', ['editableTabs', 'activeKey']),
     lockText() {
       return this.fixedTabs ? '点击解锁页头' : '点击锁定页头';
@@ -67,7 +66,7 @@ export default {
   methods: {
     // 是否锁定状态存储在store的setting[fixedTabs]中，默认为false
     // 修改store中的状态
-    ...mapMutations('setting', ['changeTabsFixed', 'correctContentHeight']),
+    ...mapMutations('setting', ['changeTabsFixed', 'setContentDifferenceHeight']),
     ...mapMutations('auth', ['changeActiveKey', 'setEditableTabs']),
     // 监听右键事件
     onContextmenu({ key }, evt) {
@@ -80,16 +79,14 @@ export default {
     },
     // 点击关闭icon
     onClose(page) {
-      console.log(page);
       this.$emit('closePage', page);
     },
     // 点击锁定/解锁icon
     onLockClick() {
       this.changeTabsFixed({ status: !this.fixedTabs });
-      this.correctContentHeight({ height: this.fixedTabs ? this.contentHeight - 64 : this.contentHeight + 64 });
+      this.setContentDifferenceHeight(this.fixedTabs ? this.contentDifferenceHeight - 64 : this.contentDifferenceHeight + 64);
     },
     onClickItem(page) {
-      console.log(page);
       this.$emit('clickPage', page);
     }
   }

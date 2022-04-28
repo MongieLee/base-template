@@ -21,6 +21,7 @@
 import MenuService from 'services/menu';
 import RoleService from 'services/system/role';
 import { mapState } from 'vuex';
+import _ from 'lodash';
 
 export default {
   name: 'AllotMenu',
@@ -35,7 +36,8 @@ export default {
       menuTree: [],
       checkedKeys: [],
       loading: false,
-      finalSelectedList: []
+      finalSelectedList: [],
+      xxx: []
     };
   },
   async created() {
@@ -48,8 +50,9 @@ export default {
   methods: {
     async getMenuByRoleId() {
       const data = await RoleService.getMenusByRoleId(this.roleId);
-      this.checkedKeys = data;
-      this.finalSelectedList = data;
+      console.log(data);
+      this.checkedKeys = (data);
+      // this.finalSelectedList = data;
       // this.menuTree.forEach(item => {
       //   let index;
       //   if ((index = this.checkedKeys.findIndex(i => i === item.id)) > 0) {
@@ -74,20 +77,15 @@ export default {
      */
     cleanHalfParentId(source = this.menuTree, treeIds = this.checkedKeys) {
       source.forEach(item => {
-        let index;
-        if ((index = treeIds.findIndex(i => i === item.id)) > 0 && item.children.length) {
-          if (!item.children.map(value => value.id).every(i => treeIds.includes(i))) {
-            this.checkedKeys.splice(index, 1);
-            console.log(`父级id${item.id + item.name}被删除了`);
+        if (treeIds.some(i => i === item.id)) {
+          if (item.children.length) {
+            this.cleanHalfParentId(item.children, treeIds);
+          } else {
+            this.xxx = [...this.xxx, item.id];
           }
-          if (item.children.length === 1 && treeIds.includes(item.children[0].id)
-            && item.children[0].children.length) {
-            this.checkedKeys.splice(treeIds.findIndex(i => i === item.id), 1);
-            console.log(`父级id${item.id + item.name}被删除了`);
-          }
-          this.cleanHalfParentId(item.children);
         }
       });
+      this.checkedKeys = this.xxx;
     },
 
     async getMenuTree() {

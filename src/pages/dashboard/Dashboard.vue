@@ -178,11 +178,8 @@ function check(rule, value, cb) {
   console.log("value:" + value);
   const illegals = [`<p data-we-empty-p=""><br></p>`, undefined, null];
   if (illegals.includes(value)) {
-    console.log("输入值不合法");
     return cb(new Error("输入值不合法"))
   }
-  console.log("rule");
-  console.log(rule);
   cb()
 }
 function test2(errmsg){

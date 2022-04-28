@@ -22,6 +22,8 @@ import ChildMenu from 'components/menu/ChildMenu';
 import { __auth_token_key__ } from 'utils/token';
 import MenuService from 'services/menu';
 import { menuTypeEnum } from 'pages/menu/config';
+import RoleService from 'services/system/role';
+import AuthService from 'services/auth';
 
 // 正则匹配是否外链
 const linkReg = new RegExp(/^http(s)?:\/\/\w+/);
@@ -73,34 +75,34 @@ export default {
         return p;
       }, []);
     },
-    async getMenuTree() {
+    async getMenuTree(values) {
       const jwtPayload = localStorage.getItem(__auth_token_key__).split('.')[1];
       const parse = JSON.parse(atob(jwtPayload));
       const userId = parse.userId;
-      const  data = await MenuService.getMenuTree();
-      // const { data } = await RoleService.getUserMenus(userId)
+      // const  data = await MenuService.getMenuTree();
+      const data = await RoleService.getUserMenus(userId);
+      const { roleId } = await AuthService.getUserInfo();
       this.menuTree = data;
       const result = [];
+      // const userPermission = await RoleService.getMenusByRoleId(roleId);
+      const [menuTree, userInfo] = await Promise.all([RoleService.getUserMenus(userId), AuthService.getUserInfo()]);
+      console.log(menuTree);
+      console.log(userInfo);
       this.setPermissionKeys(data, result);
-      this.$store.commit('auth/updatePermissionCollection', { permissionCollection: result });
+      this.$store.commit('auth/updatePermissionCollection', result);
     },
     changeOpen(openKeys) {
       this.openKeys = openKeys;
     },
-    setPermissionKeys(list, result) {
-      list.map(i => {
-        if (i.permission) {
-          result.push(i.permission);
-        }
-        if (i.children.length) {
-          i.children.map(c => {
-            if (c.permission) {
-              result.push(c.permission);
-            }
-            if (c.children.length) {
-              this.setPermissionKeys(c.children, result);
-            }
-          });
+    setPermissionKeys(list, permissionList, result) {
+      list.forEach(item => {
+        console.log(item);
+        if (item.permission) {
+          this.setPermissionKeys(item.children, permissionList, result);
+        } else {
+          if (permissionList.includes(item.path)) {
+            result.push(item.path);
+          }
         }
       });
     },

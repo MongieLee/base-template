@@ -62,7 +62,6 @@ export default {
     },
     // 菜单右键事件
     setPosition(e) {
-      console.log(e);
       // 获取并设置鼠标的x坐标和y坐标和被右键的dom
       this.top = e.clientY;
       this.left = e.clientX;

@@ -1,7 +1,7 @@
 <template>
-  <div class="fixed-height-wrapper ">
+  <div class="fixed-height-wrapper">
     <table-wrapper @change="tableChange" :data-source="listData" :columns="columns" :pagination="pagination"
-                   :loading="tableLoading" @table:refresh="tableRefresh">
+                    :loading="tableLoading" @table:refresh="tableRefresh">
       <template slot="header">
         <div ref="search" class="action-container">
         </div>
@@ -142,7 +142,8 @@ const getOriginForm = () => ({
   username: undefined, // 用户名
   nickname: undefined, // 昵称
   password: undefined, // 密码
-  verifyPassword: undefined // 确认密码
+  verifyPassword: undefined, // 确认密码
+  avatar: undefined // 头像
 });
 
 const getQueryForm = () => ({
@@ -164,7 +165,7 @@ export default {
       pagination: {
         current: 1,
         total: 0,
-        pageSize: 20
+        pageSize: 10
       },
       tableLoading: false,
       modalTitle: '弹窗',
@@ -294,7 +295,7 @@ export default {
         }
       });
     },
-    tableRefresh(){
+    tableRefresh() {
       // this.$message.error(1)
       this.getList();
     },

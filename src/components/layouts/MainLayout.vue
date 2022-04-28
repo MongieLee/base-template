@@ -4,9 +4,9 @@
     <a-layout-sider style="box-shadow: 2px 0 3px 2px rgba(0,0,0,0.25);" v-model="collapsed" :trigger="null"
                     :collapsible="true" :width="256">
       <!-- 公司Logo和名称 -->
-      <router-link to="/dashboard" class="logo-and-title">
-        <img style="width: 32px" src="@/assets/biz-logo.png" alt="company">
-        <div class="system-name">珠海百智科技</div>
+      <router-link style="overflow: hidden"  to="/dashboard" class="logo-and-title">
+        <img style="width: 44px" src="@/assets/biz-logo.png" alt="company">
+        <div   class="system-name">珠海百智科技</div>
       </router-link>
       <!-- 菜单 -->
       <MenuTree :collapsed="collapsed" />
@@ -14,18 +14,16 @@
 
     <!-- 头部及主题内容部分 -->
     <a-layout>
-      <a-layout-header v-if="!fixedTabs"
-        style="box-shadow: 0 2px 8px rgba(0,0,0,0.25); background: #fff;display: flex;justify-content: space-between;padding: 0 1rem;">
+      <a-layout-header  v-show="!fixedTabs"
+                       style="box-shadow: 0 2px 8px rgba(0,0,0,0.25); background: #fff;display: flex;justify-content: space-between;padding: 0 1rem;">
         <div style="display: inline-flex;align-items: center;">
           <a-icon style="line-height: 0" class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
                   @click="() => (collapsed = !collapsed)" />
           <bread-crumb />
         </div>
-        <div>
-          <Header />
-        </div>
+        <Header />
       </a-layout-header>
-      <a-layout-content style="margin: 10px 24px 0;">
+      <a-layout-content style="margin: 10px 24px 0;display: flex;flex-direction: column;">
         <TabsView />
         <Footer />
       </a-layout-content>
@@ -53,15 +51,9 @@ export default {
       breadcrumbPath: ''
     };
   },
-  created() {
-    this.correctContentHeight({ height: 144 });
+  computed: {
+    ...mapState('setting', ['fixedTabs'])
   },
-  computed:{
-    ...mapState("setting",["fixedTabs"])
-  },
-  methods: {
-    ...mapMutations('setting', ['correctContentHeight'])
-  }
 };
 </script>
 <style lang="less">
@@ -92,6 +84,7 @@ export default {
   align-items: center;
 
   .system-name {
+    flex: 1;
     font-size: 2rem;
     color: #fff;
     margin-left: 1.2rem;

@@ -61,7 +61,6 @@ const refreshToken = () => {
  */
 instance.interceptors.response.use((response) => {
   // 业务逻辑错误，success为false
-  console.log(response.data.success);
   return !response.data.success ? response.data : response.data.data;
 }, (error) => {
   // 如果非200状态，则会进入reject函数

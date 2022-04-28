@@ -12,6 +12,15 @@ const columns = [
     dataIndex: 'name'
   },
   {
+    title: '菜单图标',
+    dataIndex: 'icon',
+    scopedSlots: {
+      customRender: 'icon'
+    },
+    width: 80,
+    align: 'center'
+  },
+  {
     title: '父级菜单',
     dataIndex: 'parentName',
     customRender(data) {
@@ -22,15 +31,6 @@ const columns = [
     title: '排序',
     dataIndex: 'sequence',
     width: 50
-  },
-  {
-    title: '菜单图标',
-    dataIndex: 'icon',
-    scopedSlots: {
-      customRender: 'icon'
-    },
-    width: 80,
-    align: 'center'
   },
   {
     title: '菜单类型',
@@ -48,8 +48,8 @@ const columns = [
     }
   },
   {
-    title: '显示状态',
-    dataIndex: 'visible',
+    title: '状态',
+    // dataIndex: 'visible',
     scopedSlots: {
       customRender: 'visible'
     },
@@ -80,6 +80,12 @@ const rules = {
   ],
   path: [
     { required: true, trigger: 'change', message: '请输入路由或外链' }
+  ],
+  menuType: [
+    { required: true, trigger: 'change', message: '请选择菜单类型' }
+  ],
+  sequence: [
+    { required: true, trigger: 'change', message: '请输入排序号' }
   ]
 };
 

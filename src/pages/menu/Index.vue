@@ -1,11 +1,12 @@
 <template>
   <div class="fixed-height-wrapper">
-    <table-wrapper @change="tableChange" :data-source="menuTree" :columns="columns" :pagination="pagination"
+    <table-wrapper @table:refresh="getMenuTree" v-permission="'menu:list'" @change="tableChange" :data-source="menuTree"
+                   :columns="columns" :pagination="pagination"
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
         <div ref="search" class="action-container">
-          <a-button :loading="tableLoading" v-permission='"menu:add"' type="primary" @click.native="addRecord"
-                    style="margin-right: 1em">添加
+          <a-button :loading="tableLoading" type="primary" @click.native="addRecord"
+                    v-permission="'menu:add'" style="margin-right: 1em">添加
           </a-button>
         </div>
       </template>
@@ -16,8 +17,8 @@
         <span v-else>未设置</span>
       </template>
       <template slot="visible" slot-scope="{data}">
-        <a-tag :color="data?'blue':'red'">
-          {{ data ? '正常' : '隐藏' }}
+        <a-tag :color="(data.visible || data.menuType === 'F')?'blue':'red'">
+          {{ (data.visible || data.menuType === 'F') ? '正常' : '隐藏' }}
         </a-tag>
       </template>
       <div class="operation-btns" slot="operate" slot-scope="data">
@@ -53,8 +54,7 @@
         </template>
       </div>
     </table-wrapper>
-
-    <a-modal okText="保存 " :title="modalTitle" :visible="modalVisible" @ok="submitModal" @cancel="modalCancel"
+    <a-modal okText="保存" :title="modalTitle" :visible="modalVisible" @ok="submitModal" @cancel="modalCancel"
              :maskClosable="false" width="50%" :confirmLoading="confirmLoading">
       <form>
         <a-form-model
@@ -62,26 +62,26 @@
           <a-form-model-item label="菜单名" prop="name">
             <a-input placeholder="请输入菜单名" v-model="modalForm.name" />
           </a-form-model-item>
-          <a-form-model-item label="路由或外链" prop="path">
+          <a-form-model-item v-show="modalForm.menuType!=='F'" label="路由或外链" prop="path">
             <a-input placeholder="请输入路由或外联" v-model="modalForm.path" />
           </a-form-model-item>
           <a-form-model-item label="父级菜单" prop="parentId">
             <a-tree-select allowClear v-model="modalForm.parentId" placeholder="可选择父级菜单"
                            :replaceFields="{title:'name',key:'id',value:'id'}" :tree-data="menuTree"></a-tree-select>
           </a-form-model-item>
-          <a-form-model-item label="菜单图标代码">
-            <a-input placeholder="可输入菜单图标代码" v-model="modalForm.icon" />
-          </a-form-model-item>
-          <a-form-model-item label="排序">
+          <a-form-model-item label="排序" prop="sequence">
             <a-input-number style="width:100%" placeholder="可输入排序" v-model="modalForm.sequence" />
           </a-form-model-item>
-          <a-form-model-item label="菜单类型">
+          <a-form-model-item label="菜单类型" prop="menuType">
             <a-radio-group :options="typeSelectList" v-model="modalForm.menuType" />
           </a-form-model-item>
-          <a-form-model-item label="菜单类型">
+          <a-form-model-item v-show="modalForm.menuType!=='F'" label="菜单图标代码">
+            <a-input placeholder="可输入菜单图标代码" v-model="modalForm.icon" />
+          </a-form-model-item>
+          <a-form-model-item v-show="modalForm.menuType!=='F'" label="菜单展示">
             <a-radio-group :options="[{label:`显示`,value:true},{label:`隐藏`,value:false}]" v-model="modalForm.visible" />
           </a-form-model-item>
-          <a-form-model-item label="权限标识">
+          <a-form-model-item v-show="modalForm.menuType === 'F'" label="权限标识">
             <a-input placeholder="可输入权限" v-model="modalForm.permission" />
           </a-form-model-item>
           <a-form-model-item label="备注">
@@ -107,6 +107,9 @@ for (let i in menuTypeEnum) {
   });
 }
 
+const copyRules = _.cloneDeep(rules);
+Reflect.deleteProperty(copyRules, 'path');
+
 const getOriginForm = () => ({
   name: undefined, // 菜单名称
   path: undefined, // 路由或外链
@@ -118,10 +121,21 @@ const getOriginForm = () => ({
   menuType: undefined, // 菜单类型
   visible: undefined // 是否显示
 });
+
 export default {
+  watch: {
+    'modalForm.menuType'(newValue) {
+      if (newValue === 'F') {
+        this.rules = copyRules;
+      } else {
+        this.rules = rules;
+      }
+    }
+  },
   name: 'Menu',
   data() {
     return {
+      menuTypeEnum,
       modalForm: getOriginForm(),
       rules,
       columns,
@@ -166,13 +180,13 @@ export default {
         if (!valid) return;
         this.confirmLoading = true;
         try {
-          let res;
           if (!this.modalForm.id) {
-            res = await MenuService.createMenu(this.modalForm);
+            await MenuService.createMenu(this.modalForm);
+            this.$message.success('添加成功');
           } else {
-            res = await MenuService.updateMenu(this.modalForm);
+            await MenuService.updateMenu(this.modalForm);
+            this.$message.success('编辑成功');
           }
-          this.$message.success(res.msg);
         } finally {
           this.confirmLoading = false;
           this.getMenuTree();
@@ -190,6 +204,7 @@ export default {
     editRecord(data) {
       this.modalForm = _.cloneDeep(data);
       this.modalVisible = true;
+      this.modalTitle = '编辑菜单权限';
     },
     async deleteRecord({ id, name }) {
       this.$modal.confirm({
@@ -198,7 +213,7 @@ export default {
         onOk: () => {
           this.tableLoading = true;
           MenuService.deleteMenu(id).then(res => {
-            this.$message.success(res.msg);
+            this.$message.success('删除成功');
             this.getMenuTree();
           });
         },
@@ -249,13 +264,14 @@ export default {
     },
     addRecord() {
       this.modalVisible = true;
+      this.modalTitle = '添加菜单权限';
     }
   }
 };
 </script>
 
 <style lang="less" scoped>
-.fuck{
+.fuck {
   height: 100%;
   position: absolute;
 }

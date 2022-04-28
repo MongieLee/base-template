@@ -10,7 +10,7 @@ class AuthService {
   }
 
   static getUserInfo(){
-    return getRequest("/api/vi/user/info")
+    return getRequest("/api/v1/user/info")
   }
 }
 

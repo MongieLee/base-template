@@ -18,7 +18,8 @@
         <a-tabs class="dropdown-tabs" :tabBarStyle="{textAlign: 'center'}" :style="{width: '100%'}">
           <a-tab-pane tab="消息通知" key="1">
             <a-list class="tab-pane">
-              <a-list-item :class="{delete:item.IsDone}" v-for="item in [{title:123,Title:'123'},{title:123,Title:'123'}]" :key="item.id">
+              <a-list-item :class="{delete:item.IsDone}"
+                           v-for="item in [{title:123,Title:'123'},{title:123,Title:'123'}]" :key="item.id">
                 <a-list-item-meta :title="item.Title" :description="item.Remark">
                 </a-list-item-meta>
               </a-list-item>
@@ -65,7 +66,7 @@
 
 <script>
 import { clearAuthToken } from 'utils/token';
-import { mapActions, mapState } from 'vuex';
+import { mapActions, mapMutations, mapState } from 'vuex';
 import { exitFullScreen, isFullScreen, openFullScreen } from 'utils/fullscreen';
 
 export default {
@@ -83,10 +84,19 @@ export default {
   },
   methods: {
     ...mapActions('auth', ['fetchUserInfo']),
+    ...mapMutations('auth', ['clearCacheTabs']),
     logout() {
-      clearAuthToken();
-      this.$router.push({ name: 'Login' });
-
+      this.$modal.confirm({
+        title: '确定注销并退出系统吗?',
+        okText: '确定',
+        cancelText: '取消',
+        closable:true,
+        onOk: () => {
+          clearAuthToken();
+          this.clearCacheTabs();
+          this.$router.push({ path: '/login' });
+        }
+      });
     },
     inspectFullscreenEnabled() {
       return (document);
@@ -98,7 +108,6 @@ export default {
       } else {
         this.fullscreenIconStatus = true;
         openFullScreen();
-        console.log(2);
       }
     }
   }
@@ -136,7 +145,7 @@ export default {
   max-height: 290px;
 }
 
-.ant-list-item{
+.ant-list-item {
   padding: 12px 24px;
 }
 </style>

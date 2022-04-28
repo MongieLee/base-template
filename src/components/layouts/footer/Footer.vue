@@ -10,7 +10,7 @@
 import globalConfig from "configs/mainConfiguration";
 
 export default {
-  name: "Footer",
+  name: 'Footer',
   data() {
     return {
       copyright: globalConfig.copyright
