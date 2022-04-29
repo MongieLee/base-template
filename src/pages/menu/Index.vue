@@ -1,6 +1,7 @@
 <template>
   <div class="fixed-height-wrapper">
-    <table-wrapper @table:refresh="getMenuTree" v-permission="'menu:list'" @change="tableChange" :data-source="menuTree"
+    <table-wrapper @table:refresh="getMenuTree" v-if="checkPermission('menu:list')" @change="tableChange"
+                   :data-source="menuTree"
                    :columns="columns" :pagination="pagination"
                    :row-class-name="tableRowClass" :loading="tableLoading">
       <template slot="header">
@@ -149,12 +150,16 @@ export default {
     };
   },
   computed: {
-    ...mapState('setting', ['contentHeight'])
+    ...mapState('setting', ['contentHeight']),
+    ...mapState('auth', ['permissionCollection'])
   },
   created() {
     this.getMenuTree();
   },
   methods: {
+    checkPermission(permission) {
+      return this.permissionCollection.includes(permission);
+    },
     handlerTreeChild(tree) {
       return tree.map(item => {
         item?.children?.length ?

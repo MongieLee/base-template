@@ -4,17 +4,25 @@
     <a-layout-sider style="box-shadow: 2px 0 3px 2px rgba(0,0,0,0.25);" v-model="collapsed" :trigger="null"
                     :collapsible="true" :width="256">
       <!-- 公司Logo和名称 -->
-      <router-link style="overflow: hidden"  to="/dashboard" class="logo-and-title">
-        <img style="width: 44px" src="@/assets/biz-logo.png" alt="company">
-        <div   class="system-name">珠海百智科技</div>
-      </router-link>
+      <!--      <router-link style="overflow: hidden" to="/dashboard" class="logo-and-title">-->
+      <!--        <img style="width: 44px" src="@/assets/biz-logo.png" alt="company">-->
+      <!--        <h1 class="system-name">珠海百智科技</h1>-->
+      <!--      </router-link>-->
+      <div class="logo">
+        <router-link to="/">
+          <img width="32" src="@/assets/biz-logo.png" alt="logo" />
+          <!-- <img width="32" src="@/assets/img/logo.png" /> -->
+          <h1>珠海百智科技</h1>
+        </router-link>
+      </div>
+
       <!-- 菜单 -->
       <MenuTree :collapsed="collapsed" />
     </a-layout-sider>
 
     <!-- 头部及主题内容部分 -->
     <a-layout>
-      <a-layout-header  v-show="!fixedTabs"
+      <a-layout-header v-show="!fixedTabs"
                        style="box-shadow: 0 2px 8px rgba(0,0,0,0.25); background: #fff;display: flex;justify-content: space-between;padding: 0 1rem;">
         <div style="display: inline-flex;align-items: center;">
           <a-icon style="line-height: 0" class="trigger" :type="collapsed ? 'menu-unfold' : 'menu-fold'"
@@ -53,7 +61,7 @@ export default {
   },
   computed: {
     ...mapState('setting', ['fixedTabs'])
-  },
+  }
 };
 </script>
 <style lang="less">
@@ -88,6 +96,35 @@ export default {
     font-size: 2rem;
     color: #fff;
     margin-left: 1.2rem;
+  }
+}
+
+.side-menu {
+  min-height: 100vh;
+  overflow-y: auto;
+  z-index: 10;
+
+}
+
+.logo {
+  height: 64px;
+  //position: relative;
+  line-height: 64px;
+  padding-left: 24px;
+  transition: all .3s;
+  overflow: hidden;
+
+  h1 {
+    font-size: 20px;
+    margin: 0 0 0 12px;
+    display: inline-block;
+    vertical-align: middle;
+    color: white;
+  }
+
+  img {
+    width: 32px;
+    vertical-align: middle;
   }
 }
 </style>

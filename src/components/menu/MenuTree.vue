@@ -57,6 +57,8 @@ export default {
       this.getSelectedAndOpeKeys();
     },
     collapsed(newValue) {
+      // 收缩时，清空所有展开的菜单
+      // 展开时，恢复之前的展开菜单
       if (newValue) {
         this.cacheOpenKeys = this.openKeys;
         this.openKeys = [];
@@ -81,27 +83,44 @@ export default {
       const userId = parse.userId;
       // const  data = await MenuService.getMenuTree();
       const data = await RoleService.getUserMenus(userId);
+      // TODO 接口暂时没有返回权限ID
       const { roleId } = await AuthService.getUserInfo();
+      // if (!roleId) {
+      //   this.handlerUserNotRole();
+      //   return;
+      // }
       this.menuTree = data;
       const result = [];
-      // const userPermission = await RoleService.getMenusByRoleId(roleId);
-      const [menuTree, userInfo] = await Promise.all([RoleService.getUserMenus(userId), AuthService.getUserInfo()]);
-      console.log(menuTree);
-      console.log(userInfo);
       this.setPermissionKeys(data, result);
       this.$store.commit('auth/updatePermissionCollection', result);
     },
     changeOpen(openKeys) {
       this.openKeys = openKeys;
     },
-    setPermissionKeys(list, permissionList, result) {
+    handlerUserNotRole() {
+      console.log(this.$notification);
+      this.$notification.warning({
+        message: '权限提示',
+        description: '当前用户没有设置角色，系统仅显示默认面板，如需要请联系管理员'
+      });
+      // 如果没有角色，则只展示数据看板
+      this.menuTree = [{
+        icon: 'bug',
+        menuType: 'C',
+        name: '数据看板',
+        path: '/dashboard',
+        visible: true,
+        children: []
+      }];
+    },
+    setPermissionKeys(list, result) {
       list.forEach(item => {
         console.log(item);
-        if (item.permission) {
-          this.setPermissionKeys(item.children, permissionList, result);
+        if (item.children.length) {
+          this.setPermissionKeys(item.children, result);
         } else {
-          if (permissionList.includes(item.path)) {
-            result.push(item.path);
+          if (item.permission) {
+            result.push(item.permission);
           }
         }
       });

@@ -28,13 +28,13 @@ import {
   Popover,
   Tag,
   Radio,
-  Row,Checkbox,
-  Col, Statistic, List, Spin, Badge, Form, TimePicker
+  Row, Checkbox,
+  Col, Statistic, List, Spin, Badge, Form, TimePicker, Notification
 } from 'ant-design-vue';
 
 Vue.use(Modal); // use [Vue.component] won't register directive and throw directive Error
 Vue.prototype.$modal = Modal;
-
+Vue.prototype.$notification = Notification;
 const { Item: ListItem } = List;
 const { Meta: ListMeta } = ListItem;
 
@@ -49,7 +49,7 @@ const { TextArea } = Input;
 const { Item: FormItem } = Form;
 Vue.prototype.$message = message;
 
-const components = [Checkbox,TimePicker, FormItem, Form, Badge, Spin, ListMeta, List, ListItem, Grid, Statistic, Row, Col, Group, Radio, Tag, Popover, Select, BreadcrumbItem, Button, DatePicker, Input, ConfigProvider, Icon, Layout, Menu, Sider, Header, Content, Footer, Breadcrumb, MenuItem, SubMenu, FormModel, FormModelItem, Card, Divider, Dropdown, Avatar, Table, Result, Tabs, TabPane, Tooltip, TreeSelect, Popconfirm, TextArea, Tree, Upload, InputNumber
+const components = [ Checkbox, TimePicker, FormItem, Form, Badge, Spin, ListMeta, List, ListItem, Grid, Statistic, Row, Col, Group, Radio, Tag, Popover, Select, BreadcrumbItem, Button, DatePicker, Input, ConfigProvider, Icon, Layout, Menu, Sider, Header, Content, Footer, Breadcrumb, MenuItem, SubMenu, FormModel, FormModelItem, Card, Divider, Dropdown, Avatar, Table, Result, Tabs, TabPane, Tooltip, TreeSelect, Popconfirm, TextArea, Tree, Upload, InputNumber
 ];
 
 export const batchImport = (components) => {
