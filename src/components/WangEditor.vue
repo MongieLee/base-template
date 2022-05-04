@@ -45,14 +45,14 @@ export default {
     initialEditor() {
       this.instance = new E("#wangEditor");
       const { instance } = this;
-      instance.height = this.wHeight;
+      instance.config.height = this.wHeight;
       instance.config.placeholder = this.placeholder;
       instance.config.customUploadImg = async function(resultFiles,insertImgFn){
         const formData = new FormData();
         formData.append("FormFile",resultFiles[0]);
         formData.append("FileName",resultFiles[0].name);
-        const res = await FileService.uploadFile(formData);
-        insertImgFn(res.data.path)
+        const data = await FileService.uploadFile(formData);
+        insertImgFn(data.path)
       }
       instance.create();
       instance.txt.html(this.value)

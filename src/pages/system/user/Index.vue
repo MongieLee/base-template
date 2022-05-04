@@ -261,7 +261,6 @@ export default {
       this.modalForm = getOriginForm();
     },
     async uploadAvatar(file) {
-      console.log(file);
       const allowFileTypes = ['image/jpeg', 'image/png'];
       if (!allowFileTypes.includes(file.type)) {
         this.$message.error('请上传jpg或png格式的图片');

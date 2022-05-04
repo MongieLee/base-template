@@ -35,21 +35,21 @@ import {
 Vue.use(Modal); // use [Vue.component] won't register directive and throw directive Error
 Vue.prototype.$modal = Modal;
 Vue.prototype.$notification = Notification;
-const { Item: ListItem } = List;
-const { Meta: ListMeta } = ListItem;
-
-const { Grid } = Card;
-const { Group } = Radio;
-const { Sider, Header, Content, Footer } = Layout;
-const { Item: BreadcrumbItem } = Breadcrumb;
-const { Item: MenuItem, SubMenu } = Menu;
-const { Item: FormModelItem } = FormModel;
-const { TabPane } = Tabs;
-const { TextArea } = Input;
-const { Item: FormItem } = Form;
+const {Item: ListItem} = List;
+const {Meta: ListMeta} = ListItem;
+const {RangePicker} = DatePicker
+const {Grid} = Card;
+const {Group} = Radio;
+const {Sider, Header, Content, Footer} = Layout;
+const {Item: BreadcrumbItem} = Breadcrumb;
+const {Item: MenuItem, SubMenu} = Menu;
+const {Item: FormModelItem} = FormModel;
+const {TabPane} = Tabs;
+const {TextArea} = Input;
+const {Item: FormItem} = Form;
 Vue.prototype.$message = message;
 
-const components = [ Checkbox, TimePicker, FormItem, Form, Badge, Spin, ListMeta, List, ListItem, Grid, Statistic, Row, Col, Group, Radio, Tag, Popover, Select, BreadcrumbItem, Button, DatePicker, Input, ConfigProvider, Icon, Layout, Menu, Sider, Header, Content, Footer, Breadcrumb, MenuItem, SubMenu, FormModel, FormModelItem, Card, Divider, Dropdown, Avatar, Table, Result, Tabs, TabPane, Tooltip, TreeSelect, Popconfirm, TextArea, Tree, Upload, InputNumber
+const components = [RangePicker, Checkbox, TimePicker, FormItem, Form, Badge, Spin, ListMeta, List, ListItem, Grid, Statistic, Row, Col, Group, Radio, Tag, Popover, Select, BreadcrumbItem, Button, DatePicker, Input, ConfigProvider, Icon, Layout, Menu, Sider, Header, Content, Footer, Breadcrumb, MenuItem, SubMenu, FormModel, FormModelItem, Card, Divider, Dropdown, Avatar, Table, Result, Tabs, TabPane, Tooltip, TreeSelect, Popconfirm, TextArea, Tree, Upload, InputNumber
 ];
 
 export const batchImport = (components) => {

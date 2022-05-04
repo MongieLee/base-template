@@ -1,5 +1,6 @@
-import UserService from 'services/system/user';
+import UserService from 'services/newsInfo/todayNews';
 import { getToken, setToken } from 'utils/token';
+import AuthService from 'services/auth';
 
 const storageAuthKey = 'user_info';
 const cache_tabs_key = 'cache_tabs';
@@ -86,7 +87,7 @@ export default {
   },
   actions: {
     async fetchUserInfo({ commit }) {
-      const userInfo = await UserService.getUserInfo();
+      const userInfo = await AuthService.getUserInfo();
       setToken(storageAuthKey, JSON.stringify(userInfo));
       commit('updateUser', userInfo);
     }
