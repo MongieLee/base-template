@@ -21,7 +21,7 @@
         <a-button :loading="loginLoading" type="primary" style="width: 100%;height: 40px" @click="login">
           登录
         </a-button>
-        <!--        <a-button type="primary" style="width: 100%" @click="register">注册</a-button>-->
+                <a-button type="primary" style="width: 100%" @click="register">注册</a-button>
         <a-divider />
       </a-form-model>
     </a-card>

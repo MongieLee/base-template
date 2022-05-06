@@ -1,10 +1,12 @@
-import {deleteRequest, getRequest, postRequest, putRequest} from 'utils/request';
+import { deleteRequest, getRequest, postRequest, putRequest } from 'utils/request';
 
 const apiPath = {
-  base: '/api/v1/todayNews',
-  getList: '/api/v1/todayNews/list',
-  publish: '/api/v1/todayNews/publish',
-  cancelPublish: '/api/v1/todayNews/cancelPublish',
+  base: '/api/v1/todayNews', // 基础接口
+  getList: '/api/v1/todayNews/list', // 获取列表
+  publish: '/api/v1/todayNews/publish', // 发布
+  cancelPublish: '/api/v1/todayNews/cancelPublish', // 取消发布
+  batchImport: '/api/v1/todayNews/batchImport', // 批量导入
+  export: '/api/v1/todayNews/export' // 导出
 };
 
 class TodayNewsService {
@@ -12,11 +14,11 @@ class TodayNewsService {
     return getRequest(apiPath.getList, params);
   }
 
-  static async createNews(data) {
+  static createNews(data) {
     return postRequest(apiPath.base, data);
   }
 
-  static async updateNews(data) {
+  static updateNews(data) {
     return putRequest(apiPath.base, data);
   }
 
@@ -24,12 +26,20 @@ class TodayNewsService {
     return deleteRequest(apiPath.base + `/${id}`);
   }
 
-  static async publish(id) {
+  static publish(id) {
     return postRequest(apiPath.publish + `/${id}`);
   }
 
-  static async cancelPublish(id) {
+  static cancelPublish(id) {
     return postRequest(apiPath.cancelPublish + `/${id}`);
+  }
+
+  static batchImport(data) {
+    return postRequest(apiPath.batchImport, data);
+  }
+
+  static export(params) {
+    return getRequest(apiPath.export, params);
   }
 }
 

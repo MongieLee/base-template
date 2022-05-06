@@ -26,6 +26,13 @@ module.exports = {
         pathRewrite: {
           '^/': '/'
         }
+      },
+      '/exportFile': {
+        target: 'http://localhost:8066',
+        changeOrigin: true,
+        pathRewrite: {
+          '^/': '/'
+        }
       }
     }
   },
