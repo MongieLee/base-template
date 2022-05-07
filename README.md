@@ -1,4 +1,4 @@
-# fyadmin
+# base-admin-template
 
 ## Project setup
 ```

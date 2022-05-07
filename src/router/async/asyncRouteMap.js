@@ -9,16 +9,6 @@ const routerMap = {
     authority: 'admin',
     path: '/'
   },
-  one: {
-    component: () => import('@/pages/test/one.vue'),
-    authority: 'admin',
-    path: '*'
-  },
-  two: {
-    component: () => import('@/pages/test/two.vue'),
-    authority: 'admin',
-    path: '*'
-  }
 };
 
 export default routerMap;

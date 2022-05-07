@@ -7,7 +7,7 @@
         <span style="margin-left: 1rem;font-size: 2.8rem;font-weight: bold">{{ topic }}</span>
       </div>
       <p style="text-align: center;font-size: 1.4rem;color:#848587;">珠海百智科技</p>
-      <a-form-model ref="ruleForm" :model="userForm" :rules="rules">
+      <a-form-model @submit="onSubmit" ref="ruleForm" :model="userForm" :rules="rules">
         <a-form-model-item prop="username">
           <a-input v-model="userForm.username" size="large" placeholder="请输入用户名">
             <a-icon slot="prefix" type="user" />
@@ -18,10 +18,10 @@
             <a-icon slot="prefix" type="lock" />
           </a-input>
         </a-form-model-item>
-        <a-button :loading="loginLoading" type="primary" style="width: 100%;height: 40px" @click="login">
+        <a-button htmlType="submit" :loading="loginLoading" type="primary" style="width: 100%;height: 40px">
           登录
         </a-button>
-                <a-button type="primary" style="width: 100%" @click="register">注册</a-button>
+        <!--        <a-button type="primary" style="width: 100%" @click="register">注册</a-button>-->
         <a-divider />
       </a-form-model>
     </a-card>
@@ -30,7 +30,7 @@
 
 <script>
 import AuthService from 'services/auth';
-import { setAuthToken, inspectTokenValidity } from 'utils/token';
+import { setAuthToken } from 'utils/token';
 import { mapMutations } from 'vuex';
 
 export default {
@@ -54,22 +54,22 @@ export default {
   methods: {
     ...mapMutations('auth', ['setTokenInfo']),
     register() {
-      this.$refs.ruleForm.validate((valid) => {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (valid) {
-          AuthService.register(this.userForm).then(({ msg }) => {
-            this.$message.success(msg || '注册成功！');
-            this.$refs.ruleForm.resetFields();
-          });
+          await AuthService.register(this.userForm);
+          this.$message.success('注册成功，去登陆吧！');
+          this.$refs.ruleForm.resetFields();
         }
       });
     },
-    login() {
+    onSubmit() {
       this.$refs.ruleForm.validate(async (valid) => {
         if (valid) {
           try {
             this.loginLoading = true;
             // const { data: { token, expires } = await AuthService.login(this.userForm);
             const { token, expires, refresh_token } = await AuthService.login(this.userForm);
+            console.log(token, expires, refresh_token);
             this.setTokenInfo({ token, refresh_token });
             setAuthToken(token, expires, refresh_token);
             this.$router.push('/');

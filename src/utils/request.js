@@ -60,8 +60,9 @@ const refreshToken = () => {
  * 响应拦截器，主要用于处理token过期
  */
 instance.interceptors.response.use((response) => {
+  // 200状态码会进入成功回调
   // 业务逻辑错误，success为false
-  return !response.data.success ? response.data : response.data.data;
+  return response.data;
 }, (error) => {
   // 如果非200状态，则会进入reject函数
   // 判断是否有响应体
@@ -110,10 +111,10 @@ instance.interceptors.response.use((response) => {
 const request = (config = {}) => {
   return new Promise((resolve, reject) => {
     instance.request(config).then(data => {
-      if (!data?.success) {
-        resolve(data);
+      if (data?.success) {
+        resolve(data.data);
       } else {
-        throw new Error(data.msg);
+        throw new Error(data?.msg);
       }
     }).catch(error => {
       message.error(error.message || '请求失败');

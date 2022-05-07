@@ -22,7 +22,7 @@ const routes = [
       {
         path: '/dashboard',
         name: 'dashboard',
-        component: () => import(/* webpackChunkName:"dashboard"*/ 'pages/Dashboard.vue'),
+        component: () => import(/* webpackChunkName:"dashboard"*/ 'pages/dashboard'),
         meta: {title: '数据看板', icon: 'bug', keepAlive: true, permission: ['dashboard']}
       },
       {
@@ -137,7 +137,7 @@ router.beforeEach((to, from, next) => {
   if (to.meta.title) {
     document.title = to.meta.title;
   } else {
-    document.title = '管理系统';
+    document.title = '后台管理系统';
   }
   if (inspectTokenValidity()) {
     next();
