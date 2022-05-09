@@ -24,6 +24,7 @@ import MenuService from 'services/menu';
 import { menuTypeEnum } from 'pages/menu/config';
 import RoleService from 'services/system/role';
 import AuthService from 'services/auth';
+import { mapMutations } from 'vuex';
 
 // 正则匹配是否外链
 const linkReg = new RegExp(/^http(s)?:\/\/\w+/);
@@ -68,6 +69,7 @@ export default {
     }
   },
   methods: {
+    ...mapMutations('auth', ['updateUser']),
     getSelectedAndOpeKeys() {
       this.selectedKeys = [this.$route.path];
       const { matched } = this.$route;
@@ -84,7 +86,8 @@ export default {
       // const  data = await MenuService.getMenuTree();
       const data = await RoleService.getUserMenus(userId);
       // TODO 接口暂时没有返回权限ID
-      const { roleId } = await AuthService.getUserInfo();
+      const userInfo = await AuthService.getUserInfo();
+      this.updateUser(userInfo)
       // if (!roleId) {
       //   this.handlerUserNotRole();
       //   return;

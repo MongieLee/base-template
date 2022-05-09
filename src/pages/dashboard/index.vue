@@ -10,7 +10,7 @@
           <div
             style="margin-left: 2rem;display: flex;flex-direction:column;justify-content:space-between;padding: 8px 0;">
             <div class="content-title animate__animated animate__bounce">
-              {{ timeFix }}，{{ user && user.username }}
+              {{ timeFix }}，{{ user && user.nickname }}
             </div>
             <div>前端工程师 | 百智科技 - 研发部</div>
           </div>

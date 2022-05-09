@@ -5,8 +5,8 @@
         <a-card :loading="loading">
           <div class="avatar-and-name"
                style="display:flex;justify-content: center;align-items: center;flex-direction: column">
-            <a-avatar :size="88" :src="user.avatar" />
-            <p style="font-weight: bold;font-size: 2rem">{{ 'Mike Chen' }}</p>
+            <a-avatar icon="user" :size="88" :src="user.avatar" />
+            <p style="font-weight: bold;font-size: 2rem">{{ user.nickname }}</p>
             <p>{{ '生于忧患死于安乐' }}</p>
             <div style="width: 100%">
               <p>
@@ -87,7 +87,8 @@ export default {
   justify-content: center;
   margin-top: 1rem;
 }
-p{
+
+p {
   margin: 2px;
 }
 </style>

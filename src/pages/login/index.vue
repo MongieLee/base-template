@@ -7,7 +7,7 @@
         <span style="margin-left: 1rem;font-size: 2.8rem;font-weight: bold">{{ topic }}</span>
       </div>
       <p style="text-align: center;font-size: 1.4rem;color:#848587;">珠海百智科技</p>
-      <a-form-model @submit="onSubmit" ref="ruleForm" :model="userForm" :rules="rules">
+      <a-form-model @submit.prevent="onSubmit" ref="ruleForm" :model="userForm" :rules="rules">
         <a-form-model-item prop="username">
           <a-input v-model="userForm.username" size="large" placeholder="请输入用户名">
             <a-icon slot="prefix" type="user" />
@@ -72,8 +72,9 @@ export default {
             console.log(token, expires, refresh_token);
             this.setTokenInfo({ token, refresh_token });
             setAuthToken(token, expires, refresh_token);
-            this.$router.push('/');
-          } finally {
+            this.$router.push(this.$route.query.redirect ? decodeURIComponent(this.$route.query.redirect) : '/');
+          } catch (e) {
+            this.$message.error(e.message);
             this.loginLoading = false;
           }
         }

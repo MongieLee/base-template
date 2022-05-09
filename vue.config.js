@@ -21,13 +21,13 @@ module.exports = {
         }
       },
       '/uploadFiles': {
-        target: 'http://localhost:8080',
+        target: 'http://localhost:8066',
         changeOrigin: true,
         pathRewrite: {
           '^/': '/'
         }
       },
-      '/exportFile': {
+      '/exportFiles': {
         target: 'http://localhost:8066',
         changeOrigin: true,
         pathRewrite: {

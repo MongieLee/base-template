@@ -6,6 +6,7 @@ import {
 } from 'utils/token';
 import router from '@/router';
 import store from '@/store';
+import { tokenGrantType } from 'services/auth';
 
 const instance = axios.create({});
 
@@ -17,13 +18,14 @@ const METHOD = {
 };
 
 const GRANT_TYPE = {
-  ACCESS_TOKEN: 'access_token', REFRESH_TOKEN: 'refresh_token'
+  grantType: 'refresh_token', REFRESH_TOKEN: 'REFRESH_TOKEN'
 };
 
 /**
  * 重定向到登陆页面
  */
 const redirectLogin = () => {
+  message.error('登录已失效，请重新登录');
   clearAuthToken();
   return router.push({
     path: '/login', query: {
@@ -51,7 +53,9 @@ const refreshToken = () => {
   // 新建一个实例，没有拦截器
   return axios.create()({
     url: '/api/v1/auth/refreshToken', method: METHOD.POST, data: {
-      grant_type: GRANT_TYPE.REFRESH_TOKEN, refresh_token: getToken(__auth_refresh_token_key__)
+      // grantType: GRANT_TYPE.REFRESH_TOKEN,
+      tokenGrantType: tokenGrantType.refresh_token,
+      refreshToken: getToken(__auth_refresh_token_key__)
     }
   });
 };
@@ -117,7 +121,10 @@ const request = (config = {}) => {
         throw new Error(data?.msg);
       }
     }).catch(error => {
-      message.error(error.message || '请求失败');
+      console.log(`error`);
+      console.log(error);
+      console.log(`error`);
+      // message.error(error.message || '请求失败');
       reject(error);
     });
   });

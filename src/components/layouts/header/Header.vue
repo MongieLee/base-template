@@ -46,7 +46,7 @@
     </a-dropdown>
     <a-dropdown>
       <div class="header-avatar">
-        <span>{{ user && user.username }}</span>
+        <span>{{ user && user.nickname }}</span>
         <a-avatar class="avatar" size="large" shape="circle" icon="user"
                   :src="user && user.avatar || 'https://gw.alipayobjects.com/zos/antfincdn/XAosXuNZyF/BiazfanxmamNRoxxVxka.png'" />
       </div>
@@ -77,7 +77,7 @@ export default {
     };
   },
   created() {
-    this.fetchUserInfo();
+    // this.fetchUserInfo();
   },
   computed: {
     ...mapState('auth', ['user'])
