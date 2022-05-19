@@ -14,6 +14,10 @@ const columns = [
     dataIndex: 'username'
   },
   {
+    title: '昵称',
+    dataIndex: 'nickname'
+  },
+  {
     title: '头像',
     scopedSlots: {
       customRender: 'avatar'

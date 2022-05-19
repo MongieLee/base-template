@@ -80,7 +80,7 @@ const routes = [
             path: '/system/user',
             name: 'user',
             meta: {title: '用户管理', keepAlive: true, icon: 'bug', permission: ['system', 'user']},
-            component: () => import(/* webpackChunkName:"user" */ 'pages/system/user/Index.vue')
+            component: () => import(/* webpackChunkName:"user" */ 'pages/system/user/User.vue')
           }
         ]
       },

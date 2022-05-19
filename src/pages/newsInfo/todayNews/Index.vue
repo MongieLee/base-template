@@ -77,8 +77,8 @@
           <a-form-model-item label="封面图片" style="margin-bottom: -100px">
             <a-upload list-type="picture-card" class="avatar-uploader" :show-upload-list="false"
                       :before-upload="uploadAvatar">
-              <img style="height: 100%;width: 100%;" v-if="modalForm.coverImg" alt="封面图片" :src="modalForm.coverImg">
-              <div v-else>
+              <img class="hover-upload" v-if="modalForm.coverImg" alt="封面图片" :src="modalForm.coverImg">
+              <div class="hover-upload" v-else>
                 <a-icon :type="avatarLoading ? 'loading' : 'plus'" />
                 <div class="ant-upload-text">
                   上传封面
@@ -316,19 +316,19 @@ export default {
 
 <style lang="less" scoped>
 ::v-deep .avatar-uploader > .ant-upload {
-  width: 26rem;
-  display: inline-flex;
-  height: 13rem;
+  //width: 26rem;
+  //display: inline-flex;
+  //height: 13rem;
 
-  > .ant-upload {
-    > div {
-      height: 100%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      flex-direction: column;
-    }
-  }
+  //> .ant-upload {
+  //  > div {
+  //    height: 100%;
+  //    display: flex;
+  //    justify-content: center;
+  //    align-items: center;
+  //    flex-direction: column;
+  //  }
+  //}
 }
 
 .ant-upload-select-picture-card i {
@@ -339,5 +339,9 @@ export default {
 .ant-upload-select-picture-card .ant-upload-text {
   margin-top: 8px;
   color: #666;
+}
+
+.hover-upload {
+  cursor: pointer;
 }
 </style>
